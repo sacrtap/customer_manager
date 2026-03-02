@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:18
+    container_name: customer_manager_db
+    environment:
+      POSTGRES_USER: ${DB_USER:-customer_manager}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+      POSTGRES_DB: ${DB_NAME:-customer_manager}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-customer_manager}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: customer_manager_backend
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${DB_USER:-customer_manager}:${DB_PASSWORD:-changeme}@postgres:5432/${DB_NAME:-customer_manager}
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key}
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: python -m sanic main.app --host 0.0.0.0 --port 8000 --workers 4 --reload
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: customer_manager_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
