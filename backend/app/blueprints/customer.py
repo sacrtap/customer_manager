@@ -1,5 +1,5 @@
 from sanic import Blueprint, Request
-from sanic.response import json, JSONResponse
+from sanic.response import json, JSONResponse, raw
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Dict
 from datetime import datetime
@@ -8,6 +8,7 @@ from app.database import get_db_session
 from app.services.customer_service import CustomerService
 from app.decorators.rbac import require_permissions
 from app.schemas.customer import CustomerCreateRequest, CustomerUpdateRequest
+from app.utils.excel import generate_import_template, parse_import_excel
 
 
 customer_bp = Blueprint("customer", url_prefix="/api/v1/customers")
@@ -173,3 +174,109 @@ async def delete_customer(request: Request, customer_id: int):
                 "timestamp": datetime.utcnow().isoformat(),
             }
         )
+
+
+@customer_bp.get("/import-template")
+@require_permissions("customer.view")
+async def download_import_template(request: Request):
+    """下载导入模板"""
+    template = generate_import_template()
+
+    return raw(
+        template.getvalue(),
+        headers={
+            "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "Content-Disposition": "attachment; filename=客户导入模板.xlsx",
+        },
+    )
+
+
+@customer_bp.post("/import")
+@require_permissions("customer.import")
+async def import_customers(request: Request):
+    """批量导入客户"""
+    # 检查文件上传
+    if not request.files.get("file"):
+        return JSONResponse(
+            {
+                "error": {
+                    "code": "NO_FILE",
+                    "message": "请上传 Excel 文件",
+                }
+            },
+            status=400,
+        )
+
+    # 读取文件内容
+    file = request.files.get("file")
+    file_content = await file.read()
+
+    # 解析 Excel 文件
+    parse_result = parse_import_excel(file_content)
+
+    # 检查是否有错误
+    if parse_result["errors"]:
+        return JSONResponse(
+            {
+                "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": "文件中存在错误数据",
+                    "details": parse_result["errors"],
+                }
+            },
+            status=400,
+        )
+
+    # 批量导入
+    imported_count = 0
+    failed_count = 0
+    errors = []
+
+    user = request.ctx.user
+
+    async for session in get_db_session():
+        async with session.begin():
+            for customer_item in parse_result["customers"]:
+                try:
+                    customer_data = customer_item["data"]
+
+                    # 转换数据类型
+                    if customer_data["annual_consumption"]:
+                        customer_data["annual_consumption"] = float(
+                            customer_data["annual_consumption"]
+                        )
+                    else:
+                        customer_data["annual_consumption"] = 0.0
+
+                    if customer_data["sales_rep_id"]:
+                        customer_data["sales_rep_id"] = int(
+                            customer_data["sales_rep_id"]
+                        )
+
+                    # 创建客户
+                    await CustomerService.create_customer(
+                        session=session, data=customer_data, created_by=user["user_id"]
+                    )
+
+                    imported_count += 1
+
+                except Exception as e:
+                    failed_count += 1
+                    errors.append(
+                        {
+                            "row": customer_item["row"],
+                            "name": customer_item["data"]["name"],
+                            "message": str(e),
+                        }
+                    )
+
+    return json(
+        {
+            "data": {
+                "imported_count": imported_count,
+                "failed_count": failed_count,
+                "errors": errors,
+            },
+            "timestamp": datetime.utcnow().isoformat(),
+        }
+    )
