@@ -8,7 +8,11 @@ from app.database import get_db_session
 from app.services.customer_service import CustomerService
 from app.decorators.rbac import require_permissions
 from app.schemas.customer import CustomerCreateRequest, CustomerUpdateRequest
-from app.utils.excel import generate_import_template, parse_import_excel
+from app.utils.excel import (
+    generate_import_template,
+    parse_import_excel,
+    generate_export_excel,
+)
 
 
 customer_bp = Blueprint("customer", url_prefix="/api/v1/customers")
@@ -279,4 +283,53 @@ async def import_customers(request: Request):
             },
             "timestamp": datetime.utcnow().isoformat(),
         }
+    )
+
+
+@customer_bp.get("/export")
+@require_permissions("customer.export")
+async def export_customers(request: Request):
+    """批量导出客户"""
+    # 解析查询参数(同列表查询)
+    params = request.args
+
+    # 构建过滤条件(同列表查询)
+    filters = {}
+    if params.get("keyword"):
+        filters["keyword"] = params["keyword"]
+    if params.get("sales_rep_ids"):
+        filters["sales_rep_ids"] = params["sales_rep_ids"].split(",")
+    if params.get("industries"):
+        filters["industries"] = params["industries"].split(",")
+    if params.get("status"):
+        filters["status"] = params["status"]
+    if params.get("tier_levels"):
+        filters["tier_levels"] = params["tier_levels"].split(",")
+
+    # 销售只能导出自己客户
+    user = request.ctx.user
+    if user["role"] == "sales":
+        filters["sales_rep_ids"] = [str(user["user_id"])]
+
+    # 查询所有客户(不分页)
+    async for session in get_db_session():
+        result = await CustomerService.list_customers(
+            session=session,
+            filters=filters,
+            page=1,
+            size=10000,  # 大数量
+            order_by=["name asc"],
+        )
+
+        customers = result["items"]
+
+    # 生成 Excel 文件
+    excel_content = generate_export_excel(customers)
+
+    return raw(
+        excel_content.getvalue(),
+        headers={
+            "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "Content-Disposition": f"attachment; filename=客户数据_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
+        },
     )
