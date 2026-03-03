@@ -10,6 +10,9 @@ def attach_auth_middleware(app: Sanic):
     @app.middleware("request")
     async def extract_user(request: Request):
         """从请求中提取用户信息"""
+        if not hasattr(request.ctx, "user"):
+            request.ctx.user = None
+
         authorization = request.headers.get("Authorization", "")
 
         if not authorization.startswith("Bearer "):
@@ -24,8 +27,6 @@ def attach_auth_middleware(app: Sanic):
                 "role": payload["role"],
                 "permissions": payload.get("permissions", []),
             }
-        else:
-            request.ctx.user = None
 
 
 def require_auth_middleware(app: Sanic):
@@ -38,7 +39,7 @@ def require_auth_middleware(app: Sanic):
         if request.path in public_paths:
             return response
 
-        if hasattr(request.ctx, "user") and request.ctx.user is None:
+        if not hasattr(request.ctx, "user") or request.ctx.user is None:
             return JSONResponse(
                 {"error": {"code": "UNAUTHORIZED", "message": "未授权访问"}}, status=401
             )

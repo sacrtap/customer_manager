@@ -16,7 +16,7 @@ class Settings(BaseSettings):
 
     @property
     def asyncpg_url(self) -> str:
-        return f"postgresql://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
+        return f"postgresql+asyncpg://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
 
     jwt_secret: str = "your-secret-key-change-in-production"
     jwt_algorithm: str = "HS256"

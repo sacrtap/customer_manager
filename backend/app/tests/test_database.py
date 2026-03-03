@@ -5,9 +5,9 @@ from app.database import async_session_maker, engine, get_db_session
 
 
 @pytest.mark.asyncio
-async def test_database_connection():
+async def test_database_connection(test_engine):
     """测试数据库连接"""
-    async with engine.connect() as conn:
+    async with test_engine.connect() as conn:
         result = await conn.execute(text("SELECT 1"))
         assert result.scalar() == 1
 
