@@ -1,4 +1,5 @@
 from datetime import datetime
+import uuid
 
 import pytest
 from sqlalchemy import select
@@ -9,9 +10,10 @@ from app.models.customer import Customer
 @pytest.mark.asyncio
 async def test_create_customer(test_session):
     """测试创建客户"""
+    code = f"CUST{uuid.uuid4().hex[:6].upper()}"
     customer = Customer(
         name="测试客户",
-        code="CUST001",
+        code=code,
         industry="科技",
         sales_rep_id=1,
         tier_level="A",
@@ -27,7 +29,7 @@ async def test_create_customer(test_session):
 
     assert customer.id is not None
     assert customer.name == "测试客户"
-    assert customer.code == "CUST001"
+    assert customer.code == code
     assert customer.tier_level == "A"
     assert float(customer.annual_consumption) == 500000.00
 
@@ -35,7 +37,8 @@ async def test_create_customer(test_session):
 @pytest.mark.asyncio
 async def test_customer_to_dict(test_session):
     """测试客户转换为字典"""
-    customer = Customer(name="测试客户 2", code="CUST002", sales_rep_id=1)
+    code = f"CUST{uuid.uuid4().hex[:6].upper()}"
+    customer = Customer(name="测试客户 2", code=code, sales_rep_id=1)
     test_session.add(customer)
     await test_session.commit()
     await test_session.refresh(customer)

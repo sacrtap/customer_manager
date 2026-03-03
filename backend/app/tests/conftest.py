@@ -1,8 +1,11 @@
-import sys
 import os
+import sys
+
 import pytest
 import pytest_asyncio
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
+                                     create_async_engine)
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
@@ -33,6 +36,12 @@ def test_engine():
 @pytest_asyncio.fixture
 async def test_session(test_engine):
     """为每个测试创建会话"""
-    async with _test_async_session_maker() as session:
+    session = _test_async_session_maker()
+    try:
         yield session
+        await session.commit()
+    except Exception:
+        await session.rollback()
+        raise
+    finally:
         await session.close()

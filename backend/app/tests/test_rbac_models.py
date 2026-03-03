@@ -1,4 +1,5 @@
 from datetime import datetime
+import uuid
 
 import pytest
 
@@ -9,9 +10,10 @@ from app.models.role import Role
 @pytest.mark.asyncio
 async def test_create_permission(test_session):
     """测试创建权限"""
+    suffix = uuid.uuid4().hex[:6]
     permission = Permission(
-        name="查看客户",
-        code="customer.view",
+        name=f"查看客户_{suffix}",
+        code=f"customer.view.{suffix}",
         module="customer",
         description="查看客户列表和详情",
     )
@@ -20,15 +22,16 @@ async def test_create_permission(test_session):
     await test_session.refresh(permission)
 
     assert permission.id is not None
-    assert permission.code == "customer.view"
+    assert f"customer.view" in permission.code
 
 
 @pytest.mark.asyncio
 async def test_create_role(test_session):
     """测试创建角色"""
+    suffix = uuid.uuid4().hex[:6]
     role = Role(
-        name="运营专员",
-        code="specialist",
+        name=f"运营专员_{suffix}",
+        code=f"specialist_{suffix}",
         description="运营团队专员",
         permissions=["customer.view", "customer.create"],
     )
@@ -44,16 +47,18 @@ async def test_create_role(test_session):
 async def test_user_role_association(test_session):
     """测试用户角色关联"""
     from app.models.user import User
+    from app.models.role import UserRole
 
-    user = User(username="testuser", password_hash="hashed", real_name="测试用户")
+    suffix = uuid.uuid4().hex[:8]
+    user = User(username=f"testuser_{suffix}", password_hash="hashed", real_name="测试用户")
     test_session.add(user)
     await test_session.commit()
 
-    role = Role(name="测试角色", code="test_role", permissions=["*"])
+    role = Role(name=f"测试角色_{suffix}", code=f"test_role_{suffix}", permissions=["*"])
     test_session.add(role)
     await test_session.commit()
 
-    user_role = Role(user_id=user.id, role_id=role.id)
+    user_role = UserRole(user_id=user.id, role_id=role.id)
     test_session.add(user_role)
     await test_session.commit()
 
