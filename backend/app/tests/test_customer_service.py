@@ -1,3 +1,4 @@
+import uuid
 import pytest
 from app.database import async_session_maker
 from app.services.customer_service import CustomerService
@@ -6,9 +7,10 @@ from app.services.customer_service import CustomerService
 @pytest.mark.asyncio
 async def test_create_customer(test_session):
     """测试创建客户"""
+    code = f"CUST{uuid.uuid4().hex[:6].upper()}"
     data = {
         "name": "测试客户",
-        "code": "CUST001",
+        "code": code,
         "industry": "科技",
         "sales_rep_id": 1,
         "tier_level": "A",
@@ -21,7 +23,7 @@ async def test_create_customer(test_session):
 
     assert customer.id is not None
     assert customer.name == "测试客户"
-    assert customer.code == "CUST001"
+    assert customer.code == code
 
 
 @pytest.mark.asyncio
