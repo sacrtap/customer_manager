@@ -1,8 +1,7 @@
 import json
 from datetime import datetime
 
-from sqlalchemy import (JSON, BigInteger, Boolean, DateTime, ForeignKey,
-                        String, func)
+from sqlalchemy import JSON, BigInteger, Boolean, DateTime, ForeignKey, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from ..database import Base

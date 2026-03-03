@@ -17,7 +17,7 @@ async def test_create_operation_log(test_session):
         ip_address="192.168.1.1",
     )
     test_session.add(log)
-    await test_session.commit()
+    await test_session.flush()
     await test_session.refresh(log)
 
     assert log.id is not None

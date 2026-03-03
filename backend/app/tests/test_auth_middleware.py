@@ -2,8 +2,7 @@ import pytest
 from sanic import Request, Sanic
 from sanic.response import json
 
-from app.middlewares.auth import (attach_auth_middleware,
-                                  require_auth_middleware)
+from app.middlewares.auth import attach_auth_middleware, require_auth_middleware
 from app.utils.jwt import create_access_token
 
 

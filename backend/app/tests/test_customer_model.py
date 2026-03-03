@@ -1,5 +1,5 @@
-from datetime import datetime
 import uuid
+from datetime import datetime
 
 import pytest
 from sqlalchemy import select
@@ -24,7 +24,7 @@ async def test_create_customer(test_session):
         contact_email="zhangsan@example.com",
     )
     test_session.add(customer)
-    await test_session.commit()
+    await test_session.flush()
     await test_session.refresh(customer)
 
     assert customer.id is not None
@@ -40,7 +40,7 @@ async def test_customer_to_dict(test_session):
     code = f"CUST{uuid.uuid4().hex[:6].upper()}"
     customer = Customer(name="测试客户 2", code=code, sales_rep_id=1)
     test_session.add(customer)
-    await test_session.commit()
+    await test_session.flush()
     await test_session.refresh(customer)
 
     customer_dict = customer.to_dict()

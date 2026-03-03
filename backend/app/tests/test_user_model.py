@@ -1,5 +1,6 @@
-import pytest
 import uuid
+
+import pytest
 from sqlalchemy import select
 
 from app.models.user import User
@@ -11,7 +12,7 @@ async def test_create_user(test_session):
     username = f"testuser_{uuid.uuid4().hex[:8]}"
     user = User(username=username, password_hash="hashed_password", real_name="测试用户")
     test_session.add(user)
-    await test_session.commit()
+    await test_session.flush()
     await test_session.refresh(user)
 
     assert user.id is not None
@@ -23,11 +24,9 @@ async def test_create_user(test_session):
 async def test_user_to_dict(test_session):
     """测试用户转换为字典"""
     username = f"testuser_{uuid.uuid4().hex[:8]}"
-    user = User(
-        username=username, password_hash="hashed_password", real_name="测试用户2"
-    )
+    user = User(username=username, password_hash="hashed_password", real_name="测试用户2")
     test_session.add(user)
-    await test_session.commit()
+    await test_session.flush()
     await test_session.refresh(user)
 
     user_dict = user.to_dict()
