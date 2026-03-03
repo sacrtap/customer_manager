@@ -117,6 +117,35 @@ This is a new customer_manager project. The codebase is currently being initiali
 - Mock external dependencies
 - Test edge cases and error conditions
 
+### Testing Development Rules (测试开发规则)
+**重要**：以下规则基于实际开发中的问题总结，必须严格遵守以避免重复错误。
+
+1. **Git Worktree规则**
+   - 使用git worktree时，所有文件操作（读取、写入、编辑）必须使用workdir参数指定正确的工作树目录
+   - 否则文件会被创建在错误的目录（主目录而非工作树目录）
+
+2. **异步测试规则** (pytest-asyncio + SQLAlchemy Async)
+   - 每个测试使用独立引擎（function scope）避免连接池冲突
+   - 使用async_sessionmaker创建会话工厂
+   - 必须在pytest.ini中配置asyncio_mode=auto
+   - conftest.py中正确使用@pytest_asyncio.fixture装饰器
+   - 连接池配置：pool_size=1, max_overflow=0 (测试环境)
+
+3. **Session管理规则**
+   - 测试中使用flush()代替commit()保持数据在事务中
+   - 使用嵌套事务（async with session.begin()）自动回滚
+   - 标准模式：session.begin() -> yield -> rollback() -> close()
+   - 不要在测试fixture中手动commit，会导致状态问题
+
+4. **测试数据规则**
+   - 使用UUID生成唯一标识符避免唯一性约束冲突
+   - 重复运行测试时数据必须唯一（用户名、客户代码、权限代码等）
+
+5. **模块导入规则**
+   - pytest.ini仅配置（asyncio_mode），不导入模块
+   - 所有模块导入在conftest.py中完成
+   - 避免重复导入导致冲突
+
 ### Security
 - Never commit secrets, API keys, or credentials
 - Validate and sanitize all user inputs
