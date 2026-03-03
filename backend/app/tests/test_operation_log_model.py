@@ -1,5 +1,7 @@
-import pytest
 from datetime import datetime
+
+import pytest
+
 from app.database import async_session_maker
 from app.models.operation_log import OperationLog
 
@@ -14,12 +16,12 @@ async def test_create_operation_log():
             target_type="customer",
             target_id=100,
             new_value={"name": "测试客户"},
-            ip_address="192.168.1.1"
+            ip_address="192.168.1.1",
         )
         session.add(log)
         await session.commit()
         await session.refresh(log)
-        
+
         assert log.id is not None
         assert log.operation_type == "customer.create"
         assert log.target_id == 100

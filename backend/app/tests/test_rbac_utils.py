@@ -1,5 +1,6 @@
 import pytest
-from app.utils.rbac import has_permission, check_rbac
+
+from app.utils.rbac import check_rbac, has_permission
 
 
 def test_has_permission_exact_match():
@@ -29,7 +30,7 @@ def test_check_rbac_normal_user():
     """测试普通用户权限检查"""
     user_permissions = ["customer.view", "customer.create"]
     required_permissions = ["customer.view"]
-    
+
     assert check_rbac("user", user_permissions, required_permissions) is True
 
 
@@ -37,5 +38,5 @@ def test_check_rbac_insufficient_permissions():
     """测试权限不足"""
     user_permissions = ["customer.view"]
     required_permissions = ["customer.delete"]
-    
+
     assert check_rbac("user", user_permissions, required_permissions) is False

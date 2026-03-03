@@ -1,12 +1,14 @@
 import pytest
-from app.database import engine, async_session_maker, get_db_session
+from sqlalchemy import text
+
+from app.database import async_session_maker, engine, get_db_session
 
 
 @pytest.mark.asyncio
 async def test_database_connection():
     """测试数据库连接"""
     async with engine.connect() as conn:
-        result = await conn.execute("SELECT 1")
+        result = await conn.execute(text("SELECT 1"))
         assert result.scalar() == 1
 
 

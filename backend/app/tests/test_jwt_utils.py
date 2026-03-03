@@ -1,4 +1,5 @@
 import pytest
+
 from app.utils.jwt import create_access_token, decode_token
 
 
@@ -7,11 +8,11 @@ def test_create_and_decode_token():
     user_id = 123
     role = "admin"
     permissions = ["*"]
-    
+
     token = create_access_token(user_id, role, permissions)
     assert isinstance(token, str)
     assert len(token) > 0
-    
+
     payload = decode_token(token)
     assert payload is not None
     assert payload["user_id"] == user_id

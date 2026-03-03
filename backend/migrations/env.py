@@ -1,16 +1,17 @@
+import asyncio
+import os
+import sys
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config, pool
 from alembic import context
-import sys
-import os
+from sqlalchemy import engine_from_config, pool
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from app.database import Base
 from app.config import settings
-
-from app.models import customer, user, role, permission, operation_log
+from app.database import Base
+from app.models import customer, operation_log, permission, role, user
 
 config = context.config
 
@@ -33,24 +34,28 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
-def run_migrations_online() -> None:
+async def run_migrations_online() -> None:
     """以在线模式运行迁移"""
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    from sqlalchemy.ext.asyncio import create_async_engine
 
-    with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+    connectable = create_async_engine(settings.database_url)
 
-        with context.begin_transaction():
-            context.run_migrations()
+    async with connectable.connect() as connection:
+        await connection.run_sync(do_run_migrations)
+
+
+def do_run_migrations(connection):
+    context.configure(connection=connection, target_metadata=target_metadata)
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+def run_migrations_online_wrapper():
+    """同步包装器"""
+    asyncio.run(run_migrations_online())
 
 
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    run_migrations_online()
+    run_migrations_online_wrapper()

@@ -1,14 +1,17 @@
-from sqlalchemy import BigInteger, String, DateTime, func, ForeignKey, JSON
-from sqlalchemy.orm import Mapped, mapped_column
-from ..database import Base
-from datetime import datetime
 import json
+from datetime import datetime
+
+from sqlalchemy import JSON, BigInteger, DateTime, ForeignKey, String, func
+from sqlalchemy.orm import Mapped, mapped_column
+
+from ..database import Base
 
 
 class OperationLog(Base):
     """操作日志模型"""
+
     __tablename__ = "operation_logs"
-    
+
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True)
     operation_type: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
@@ -17,8 +20,10 @@ class OperationLog(Base):
     old_value: Mapped[dict] = mapped_column(JSON, nullable=True)
     new_value: Mapped[dict] = mapped_column(JSON, nullable=True)
     ip_address: Mapped[str] = mapped_column(String(50), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), index=True)
-    
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=func.now(), index=True
+    )
+
     def to_dict(self):
         """转换为字典"""
         return {
@@ -30,5 +35,5 @@ class OperationLog(Base):
             "old_value": self.old_value,
             "new_value": self.new_value,
             "ip_address": self.ip_address,
-            "created_at": self.created_at.isoformat() if self.created_at else None
+            "created_at": self.created_at.isoformat() if self.created_at else None,
         }

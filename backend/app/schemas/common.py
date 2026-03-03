@@ -1,13 +1,14 @@
-from pydantic import BaseModel, Field
-from typing import Optional, List, Generic, TypeVar
 from datetime import datetime
+from typing import Generic, List, Optional, TypeVar
 
+from pydantic import BaseModel, Field
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class PaginatedResponse(BaseModel, Generic[T]):
     """分页响应"""
+
     items: List[T]
     total: int
     page: int
@@ -17,6 +18,7 @@ class PaginatedResponse(BaseModel, Generic[T]):
 
 class ErrorResponse(BaseModel):
     """错误响应"""
+
     code: str
     message: str
     details: Optional[list] = None
@@ -26,5 +28,6 @@ class ErrorResponse(BaseModel):
 
 class SuccessResponse(BaseModel):
     """成功响应"""
+
     data: dict
     timestamp: str

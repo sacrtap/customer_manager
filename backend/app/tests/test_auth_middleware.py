@@ -1,7 +1,9 @@
 import pytest
-from sanic import Sanic, Request
+from sanic import Request, Sanic
 from sanic.response import json
-from app.middlewares.auth import attach_auth_middleware, require_auth_middleware
+
+from app.middlewares.auth import (attach_auth_middleware,
+                                  require_auth_middleware)
 from app.utils.jwt import create_access_token
 
 
@@ -11,15 +13,15 @@ def app():
     app = Sanic("test_app")
     attach_auth_middleware(app)
     require_auth_middleware(app)
-    
+
     @app.get("/protected")
     async def protected(request):
         return json({"user": request.ctx.user})
-    
+
     @app.get("/public")
     async def public(request):
         return json({"message": "public"})
-    
+
     return app
 
 
@@ -39,11 +41,10 @@ def test_protected_endpoint_without_token(app):
 def test_protected_endpoint_with_valid_token(app):
     """测试受保护端点有效 Token"""
     token = create_access_token(123, "admin", ["*"])
-    
+
     request, response = app.test_client.get(
-        "/protected",
-        headers={"Authorization": f"Bearer {token}"}
+        "/protected", headers={"Authorization": f"Bearer {token}"}
     )
-    
+
     assert response.status == 200
     assert response.json["user"]["user_id"] == 123
