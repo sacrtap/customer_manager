@@ -1,0 +1,60 @@
+{
+  "test_customers": [
+    {
+      "name": "XX科技有限责任公司",
+      "code": "CUST001",
+      "industry": "科技",
+      "sales_rep_id": 4,
+      "tier_level": "A",
+      "annual_consumption": 500000.00,
+      "status": "active",
+      "contact_person": "张三",
+      "contact_phone": "13800138000",
+      "contact_email": "zhangsan@xxtech.com",
+      "address": "北京市朝阳区科技园",
+      "remark": "重点客户"
+    },
+    {
+      "name": "YY贸易公司",
+      "code": "CUST002",
+      "industry": "贸易",
+      "sales_rep_id": 3,
+      "tier_level": "B",
+      "annual_consumption": 300000.00,
+      "status": "active",
+      "contact_person": "李四",
+      "contact_phone": "13800138001",
+      "contact_email": "lisi@yytrade.com",
+      "address": "上海市浦东新区",
+      "remark": ""
+    },
+    {
+      "name": "ZZ制造企业",
+      "code": "CUST003",
+      "industry": "制造",
+      "sales_rep_id": 3,
+      "tier_level": "A",
+      "annual_consumption": 800000.00,
+      "status": "active",
+      "contact_person": "王五",
+      "contact_phone": "13800138002",
+      "contact_email": "wangwu@zzmfg.com",
+      "address": "深圳市南山区",
+      "remark": "新增客户"
+    },
+    {
+      "name": "AA服务公司",
+      "code": "CUST004",
+      "industry": "服务",
+      "sales_rep_id": 4,
+      "tier_level": "C",
+      "annual_consumption": 150000.00,
+      "status": "active",
+      "contact_person": "赵六",
+      "contact_phone": "13800138003",
+      "contact_email": "zhaoliu@aaservice.com",
+      "address": "广州市天河区",
+      "remark": ""
+    }
+  ]
+}

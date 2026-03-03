@@ -1,0 +1,40 @@
+{
+  "test_users": [
+    {
+      "username": "admin",
+      "password": "admin123",
+      "real_name": "系统管理员",
+      "email": "admin@example.com",
+      "phone": "13800000001",
+      "role": "admin",
+      "status": "active"
+    },
+    {
+      "username": "manager",
+      "password": "manager123",
+      "real_name": "运营经理",
+      "email": "manager@example.com",
+      "phone": "13800000002",
+      "role": "manager",
+      "status": "active"
+    },
+    {
+      "username": "specialist",
+      "password": "specialist123",
+      "real_name": "运营专员",
+      "email": "specialist@example.com",
+      "phone": "13800000003",
+      "role": "specialist",
+      "status": "active"
+    },
+    {
+      "username": "sales",
+      "password": "sales123",
+      "real_name": "销售人员",
+      "email": "sales@example.com",
+      "phone": "13800000004",
+      "role": "sales",
+      "status": "active"
+    }
+  ]
+}
