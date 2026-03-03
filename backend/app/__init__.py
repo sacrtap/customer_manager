@@ -2,6 +2,7 @@ from sanic import Sanic
 from sanic.response import json
 from .config import settings
 from .database import engine, Base
+from .middlewares.auth import attach_auth_middleware, require_auth_middleware
 import os
 
 
@@ -19,6 +20,9 @@ def create_app():
         JWT_SECRET=settings.jwt_secret,
         ENVIRONMENTIRONMENT=settings.environment
     )
+    
+    attach_auth_middleware(app)
+    require_auth_middleware(app)
     
     @app.get("/health")
     async def health_check(request):
