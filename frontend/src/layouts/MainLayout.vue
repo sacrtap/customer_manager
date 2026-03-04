@@ -1,132 +1,132 @@
 <!-- frontend/src/layouts/MainLayout.vue -->
 <template>
   <div class="main-layout">
-    <Layout>
+    <a-layout>
       <!-- 顶部导航栏 -->
-      <Header class="layout-header">
+      <a-layout-header class="layout-header">
         <div class="header-left">
-          <Space>
-            <Icon type="icon-dashboard" :size="24" />
+          <a-space>
+            <a-icon type="icon-dashboard" :size="24" />
             <span class="app-title">客户运营中台</span>
-          </Space>
+          </a-space>
         </div>
 
         <div class="header-right">
-          <Space>
+          <a-space>
             <!-- 通知图标 -->
-            <Badge :count="notificationCount" :max-count="99">
-              <Button shape="circle" type="text" @click="showNotifications">
-                <Icon type="icon-notification" :size="20" />
-              </Button>
-            </Badge>
+            <a-badge :count="notificationCount" :max-count="99">
+              <a-button shape="circle" type="text" @click="showNotifications">
+                <a-icon type="icon-notification" :size="20" />
+              </a-button>
+            </a-badge>
 
             <!-- 用户信息下拉菜单 -->
-            <Dropdown @select="handleMenuSelect">
+            <a-dropdown @select="handleMenuSelect">
               <div class="user-info">
-                <Avatar :size="32">
+                <a-avatar :size="32">
                   {{ userInfo.real_name?.charAt(0) }}
-                </Avatar>
+                </a-avatar>
                 <span class="user-name">{{ userInfo.real_name }}</span>
-                <Icon type="icon-down" />
+                <a-icon type="icon-down" />
               </div>
 
               <template #content>
-                <Dropdown-menu>
-                  <Dropdown-menu-item key="profile">
-                    <Icon type="icon-user" />
+                <a-dropdown-menu>
+                  <a-dropdown-menu-item key="profile">
+                    <a-icon type="icon-user" />
                     个人信息
-                  </Dropdown-menu-item>
-                  <Dropdown-menu-item key="change-password">
-                    <Icon type="icon-lock" />
+                  </a-dropdown-menu-item>
+                  <a-dropdown-menu-item key="change-password">
+                    <a-icon type="icon-lock" />
                     修改密码
-                  </Dropdown-menu-item>
-                  <Dropdown-menu-item key="divider" />
-                  <Dropdown-menu-item key="logout">
-                    <Icon type="icon-logout" />
+                  </a-dropdown-menu-item>
+                  <a-dropdown-menu-item key="divider" />
+                  <a-dropdown-menu-item key="logout">
+                    <a-icon type="icon-logout" />
                     退出登录
-                  </Dropdown-menu-item>
-                </Dropdown-menu>
+                  </a-dropdown-menu-item>
+                </a-dropdown-menu>
               </template>
-            </Dropdown>
-          </Space>
+            </a-dropdown>
+          </a-space>
         </div>
-      </Header>
+      </a-layout-header>
 
-      <Layout>
+      <a-layout>
         <!-- 侧边栏菜单 -->
-        <Sider collapsible breakpoint="xl">
-          <Menu
+        <a-layout-sider collapsible breakpoint="xl">
+          <a-menu
             :selected-keys="selectedMenuKeys"
             :default-selected-keys="['dashboard']"
             @menu-item-click="handleMenuSelect"
           >
-            <Menu-item key="dashboard">
+            <a-menu-item key="dashboard">
               <template #icon>
-                <Icon type="icon-home" />
+                <a-icon type="icon-home" />
               </template>
               工作台
-            </Menu-item>
+            </a-menu-item>
 
-            <Sub-menu key="customer">
+            <a-sub-menu key="customer">
               <template #icon>
-                <Icon type="icon-user-group" />
+                <a-icon type="icon-user-group" />
               </template>
               <template #title>客户管理</template>
-              <Menu-item key="customer-list">
+              <a-menu-item key="customer-list">
                 客户列表
-              </Menu-item>
-              <Menu-item
+              </a-menu-item>
+              <a-menu-item
                 v-if="hasPermission('customer.import')"
                 key="customer-import"
               >
                 批量导入
-              </Menu-item>
-            </Sub-menu>
+              </a-menu-item>
+            </a-sub-menu>
 
-            <Sub-menu
+            <a-sub-menu
               v-if="hasAnyPermission(['user.view', 'rbac.role', 'system.log.view'])"
               key="system"
             >
               <template #icon>
-                <Icon type="icon-settings" />
+                <a-icon type="icon-settings" />
               </template>
               <template #title>系统管理</template>
-              <Menu-item
+              <a-menu-item
                 v-if="hasPermission('user.view')"
                 key="system-users"
               >
                 用户管理
-              </Menu-item>
-              <Menu-item
+              </a-menu-item>
+              <a-menu-item
                 v-if="hasPermission('rbac.role')"
                 key="system-roles"
               >
                 角色管理
-              </Menu-item>
-              <Menu-item
+              </a-menu-item>
+              <a-menu-item
                 v-if="hasPermission('system.log.view')"
                 key="system-logs"
               >
                 操作日志
-              </Menu-item>
-            </Sub-menu>
-          </Menu>
-        </Sider>
+              </a-menu-item>
+            </a-sub-menu>
+          </a-menu>
+        </a-layout-sider>
 
         <!-- 内容区域 -->
-        <Content class="layout-content">
+        <a-layout-content class="layout-content">
           <router-view />
-        </Content>
-      </Layout>
-    </Layout>
+        </a-layout-content>
+      </a-layout>
+    </a-layout>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Modal, Message } from '@arco-design/web-vue'
-import { use } from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const route = useRoute()

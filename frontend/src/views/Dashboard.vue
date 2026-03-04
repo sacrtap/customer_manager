@@ -1,81 +1,91 @@
 <!-- frontend/src/views/Dashboard.vue -->
 <template>
   <div class="dashboard">
-    <Row :gutter="16">
+    <a-row :gutter="16">
       <!-- 欢迎卡片 -->
-      <Col :span="24">
-        <Card class="welcome-card">
-          <Space align="center">
-            <Avatar :size="64" :style="{ backgroundColor: '#1890ff' }">
-              {{ userInfo.real_name?.charAt(0) }}
-            </Avatar>
-            <div>
-              <div class="welcome-title">
-                欢迎回来,{{ userInfo.real_name }}!
+      <a-col :span="24">
+        <a-card class="welcome-card">
+          <template #extra>
+            <a-space align="center">
+              <a-avatar :size="64" :style="{ backgroundColor: '#1890ff' }">
+                {{ userInfo.real_name?.charAt(0) }}
+              </a-avatar>
+              <div>
+                <div class="welcome-title">
+                  欢迎回来，{{ userInfo.real_name }}!
+                </div>
+                <div class="welcome-subtitle">
+                  {{ roleText }} | {{ userInfo.email }}
+                </div>
               </div>
-              <div class="welcome-subtitle">
-                {{ roleText }} | {{ userInfo.email }}
-              </div>
-            </div>
-          </Space>
-        </Card>
-      </Col>
+            </a-space>
+          </template>
+        </a-card>
+      </a-col>
 
       <!-- 快捷入口 -->
-      <Col :span="6">
-        <Card class="quick-link-card" hoverable @click="goToCustomerList">
+      <a-col :span="6">
+        <a-card class="quick-link-card" hoverable>
           <template #extra>
-            <Icon type="icon-user-group" :size="32" />
+            <a-icon type="icon-user-group" :size="32" />
           </template>
-          <div class="card-title">客户管理</div>
-          <div class="card-desc">管理客户数据</div>
-        </Card>
-      </Col>
+          <div class="card-content" @click="goToCustomerList">
+            <div class="card-title">客户管理</div>
+            <div class="card-desc">管理客户数据</div>
+          </div>
+        </a-card>
+      </a-col>
 
-      <Col :span="6" v-if="hasPermission('customer.import')">
-        <Card class="quick-link-card" hoverable @click="goToCustomerImport">
+      <a-col :span="6" v-if="hasPermission('customer.import')">
+        <a-card class="quick-link-card" hoverable>
           <template #extra>
-            <Icon type="icon-import" :size="32" />
+            <a-icon type="icon-import" :size="32" />
           </template>
-          <div class="card-title">批量导入</div>
-          <div class="card-desc">Excel 数据导入</div>
-        </Card>
-      </Col>
+          <div class="card-content" @click="goToCustomerImport">
+            <div class="card-title">批量导入</div>
+            <div class="card-desc">Excel 数据导入</div>
+          </div>
+        </a-card>
+      </a-col>
 
-      <Col :span="6" v-if="hasPermission('system.log.view')">
-        <Card class="quick-link-card" hoverable @click="goToSystemLogs">
+      <a-col :span="6" v-if="hasPermission('system.log.view')">
+        <a-card class="quick-link-card" hoverable>
           <template #extra>
-            <Icon type="icon-history" :size="32" />
+            <a-icon type="icon-history" :size="32" />
           </template>
-          <div class="card-title">操作日志</div>
-          <div class="card-desc">查看操作记录</div>
-        </Card>
-      </Col>
+          <div class="card-content" @click="goToSystemLogs">
+            <div class="card-title">操作日志</div>
+            <div class="card-desc">查看操作记录</div>
+          </div>
+        </a-card>
+      </a-col>
 
-      <Col :span="6" v-if="hasPermission('user.view')">
-        <Card class="quick-link-card" hoverable @click="goToSystemUsers">
+      <a-col :span="6" v-if="hasPermission('user.view')">
+        <a-card class="quick-link-card" hoverable>
           <template #extra>
-            <Icon type="icon-user" :size="32" />
+            <a-icon type="icon-user" :size="32" />
           </template>
-          <div class="card-title">用户管理</div>
-          <div class="card-desc">管理系统用户</div>
-        </Card>
-      </Col>
-    </Row>
+          <div class="card-content" @click="goToSystemUsers">
+            <div class="card-title">用户管理</div>
+            <div class="card-desc">管理系统用户</div>
+          </div>
+        </a-card>
+      </a-col>
+    </a-row>
 
     <!-- 最近操作记录 -->
-    <Row :gutter="16" style="margin-top: 16px;">
-      <Col :span="24">
-        <Card title="最近操作" class="recent-operations">
-          <Table
+    <a-row :gutter="16" style="margin-top: 16px;">
+      <a-col :span="24">
+        <a-card title="最近操作" class="recent-operations">
+          <a-table
             :columns="logColumns"
             :data="recentOperations"
             :loading="loading"
             :pagination="false"
           />
-        </Card>
-      </Col>
-    </Row>
+        </a-card>
+      </a-col>
+    </a-row>
   </div>
 </template>
 
@@ -171,7 +181,6 @@ onMounted(() => {
   }
 
   .quick-link-card {
-    cursor: pointer;
     transition: all 0.3s;
     text-align: center;
     padding: 24px 16px;
@@ -179,6 +188,10 @@ onMounted(() => {
     &:hover {
       transform: translateY(-4px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-content {
+      cursor: pointer;
     }
 
     .card-title {

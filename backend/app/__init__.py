@@ -6,7 +6,7 @@ from sanic.response import json
 from .config import settings
 from .database import Base, engine
 from .middlewares.auth import attach_auth_middleware, require_auth_middleware
-from .blueprints import customer, auth, role
+from .blueprints import customer, auth, role, system
 
 
 async def init_db():
@@ -30,6 +30,7 @@ def create_app():
     app.blueprint(auth.auth_bp)
     app.blueprint(customer.customer_bp)
     app.blueprint(role.role_bp)
+    app.blueprint(system.system_bp)
 
     @app.get("/health")
     async def health_check(request):

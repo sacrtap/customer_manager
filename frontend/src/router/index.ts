@@ -119,13 +119,14 @@ router.beforeEach((to, from, next) => {
 
   if (to.meta.permissions && token) {
     const permissions = JSON.parse(localStorage.getItem('permissions') || '[]')
-    const hasPermission = to.meta.permissions.some((perm: string) => {
+    
+    const hasPermission = permissions.some((perm: string) => {
       if (perm === '*') return true
       if (perm.includes('.*')) {
         const prefix = perm.replace('.*', '')
-        return permissions.some((p: string) => p.startsWith(prefix))
+        return to.meta.permissions.some((p: string) => p.startsWith(prefix))
       }
-      return permissions.includes(perm)
+      return to.meta.permissions.includes(perm)
     })
 
     if (!hasPermission) {

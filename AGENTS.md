@@ -146,12 +146,18 @@ This is a new customer_manager project. The codebase is currently being initiali
    - 所有模块导入在 conftest.py 中完成
    - 避免重复导入导致冲突
 
-6. **前端 E2E 测试规则** (Playwright + Arco Design)
-   - 确保 main.ts 中全局注册所有使用的 UI 组件库（如 Arco Design）
-   - 组件未注册会导致渲染失败，所有 E2E 测试失败
-   - 使用浏览器调试模式（headed）观察实际渲染问题
-   - 验证错误样式类需根据 UI 库实际输出调整（如 `.arco-form-item-error`）
-   - 表单验证需使用 formRef.validate() 手动触发
+ 6. **前端 E2E 测试规则** (Playwright + Arco Design)
+    - 确保 main.ts 中全局注册所有使用的 UI 组件库（如 Arco Design）
+    - 组件未注册会导致渲染失败，所有 E2E 测试失败
+    - 使用浏览器调试模式（headed）观察实际渲染问题
+    - 验证错误样式类需根据 UI 库实际输出调整（如 `.arco-form-item-error`）
+    - 表单验证需使用 formRef.validate() 手动触发
+
+ 7. **路由权限守卫规则** (Vue Router)
+    - 权限检查必须遍历用户权限数组，而非路由meta.permissions数组
+    - 错误示例：`to.meta.permissions.some(perm => permissions.includes(perm))`
+    - 正确示例：`permissions.some(perm => to.meta.permissions.includes(perm))`
+    - 通配符'*'权限检查需在用户权限循环中判断，而非在路由权限循环中
 
 ### Security
 - Never commit secrets, API keys, or credentials
