@@ -1,49 +1,44 @@
 {
-  "test_users": [
-    {
+  "users": {
+    "admin": {
       "username": "admin",
       "password": "Admin@123",
       "real_name": "系统管理员",
       "email": "admin@example.com",
-      "phone": "13800138000",
-      "status": "active",
-      "role": "admin"
+      "role": "admin",
+      "status": "active"
     },
-    {
+    "manager": {
       "username": "manager",
       "password": "Manager@123",
       "real_name": "运营经理",
       "email": "manager@example.com",
-      "phone": "13900139000",
-      "status": "active",
-      "role": "manager"
+      "role": "manager",
+      "status": "active"
     },
-    {
+    "specialist": {
       "username": "specialist",
       "password": "Specialist@123",
       "real_name": "运营专员",
       "email": "specialist@example.com",
-      "phone": "13700137000",
-      "status": "active",
-      "role": "specialist"
+      "role": "specialist",
+      "status": "active"
     },
-    {
+    "sales": {
       "username": "sales",
       "password": "Sales@123",
       "real_name": "销售人员",
       "email": "sales@example.com",
-      "phone": "13600136000",
-      "status": "active",
-      "role": "sales"
+      "role": "sales",
+      "status": "active"
     },
-    {
+    "inactive": {
       "username": "test_inactive",
       "password": "Test123!",
       "real_name": "测试禁用用户",
       "email": "inactive@test.com",
-      "phone": "13500135000",
-      "status": "inactive",
-      "role": "specialist"
+      "role": "specialist",
+      "status": "inactive"
     }
-  ]
+  }
 }

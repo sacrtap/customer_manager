@@ -22,7 +22,7 @@ async def create_test_users():
     # 读取测试用户数据
     fixture_path = os.path.join(
         os.path.dirname(os.path.dirname(__file__)),
-        "test-e2e",
+        "backend",
         "fixtures",
         "users.json",
     )

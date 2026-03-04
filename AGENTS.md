@@ -142,9 +142,16 @@ This is a new customer_manager project. The codebase is currently being initiali
    - 重复运行测试时数据必须唯一（用户名、客户代码、权限代码等）
 
 5. **模块导入规则**
-   - pytest.ini仅配置（asyncio_mode），不导入模块
-   - 所有模块导入在conftest.py中完成
+   - pytest.ini 仅配置（asyncio_mode），不导入模块
+   - 所有模块导入在 conftest.py 中完成
    - 避免重复导入导致冲突
+
+6. **前端 E2E 测试规则** (Playwright + Arco Design)
+   - 确保 main.ts 中全局注册所有使用的 UI 组件库（如 Arco Design）
+   - 组件未注册会导致渲染失败，所有 E2E 测试失败
+   - 使用浏览器调试模式（headed）观察实际渲染问题
+   - 验证错误样式类需根据 UI 库实际输出调整（如 `.arco-form-item-error`）
+   - 表单验证需使用 formRef.validate() 手动触发
 
 ### Security
 - Never commit secrets, API keys, or credentials
