@@ -143,7 +143,8 @@ class CustomerService:
             )
 
         if "sales_rep_ids" in filters and filters["sales_rep_ids"]:
-            query = query.where(Customer.sales_rep_id.in_(filters["sales_rep_ids"]))
+            sales_rep_ids = [int(id_) for id_ in filters["sales_rep_ids"]]
+            query = query.where(Customer.sales_rep_id.in_(sales_rep_ids))
 
         if "industries" in filters and filters["industries"]:
             query = query.where(Customer.industry.in_(filters["industries"]))

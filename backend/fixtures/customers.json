@@ -1,0 +1,69 @@
+{
+  "test_customers": [
+    {
+      "name": "测试科技公司",
+      "code": "TEST001",
+      "industry": "科技",
+      "status": "active",
+      "level": "A",
+      "annual_revenue": 1000000.00,
+      "contact_person": "张三",
+      "contact_phone": "13800138000",
+      "contact_email": "zhangsan@test.com",
+      "address": "北京市朝阳区",
+      "notes": "测试客户数据"
+    },
+    {
+      "name": "示例制造企业",
+      "code": "TEST002",
+      "industry": "制造",
+      "status": "active",
+      "level": "B",
+      "annual_revenue": 500000.00,
+      "contact_person": "李四",
+      "contact_phone": "13900139000",
+      "contact_email": "lisi@example.com",
+      "address": "上海市浦东新区",
+      "notes": "制造业测试客户"
+    },
+    {
+      "name": "样板贸易公司",
+      "code": "TEST003",
+      "industry": "贸易",
+      "status": "inactive",
+      "level": "C",
+      "annual_revenue": 200000.00,
+      "contact_person": "王五",
+      "contact_phone": "13700137000",
+      "contact_email": "wangwu@sample.com",
+      "address": "广州市天河区",
+      "notes": "贸易公司测试"
+    },
+    {
+      "name": "金融服务集团",
+      "code": "TEST004",
+      "industry": "金融",
+      "status": "pending",
+      "level": "A",
+      "annual_revenue": 5000000.00,
+      "contact_person": "赵六",
+      "contact_phone": "13600136000",
+      "contact_email": "zhaoliu@finance.com",
+      "address": "深圳市南山区",
+      "notes": "金融服务客户"
+    },
+    {
+      "name": "教育科技公司",
+      "code": "TEST005",
+      "industry": "教育",
+      "status": "active",
+      "level": "B",
+      "annual_revenue": 800000.00,
+      "contact_person": "孙七",
+      "contact_phone": "13500135000",
+      "contact_email": "sunqi@edu.com",
+      "address": "杭州市西湖区",
+      "notes": "教育科技测试"
+    }
+  ]
+}

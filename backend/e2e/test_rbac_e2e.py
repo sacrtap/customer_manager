@@ -22,7 +22,7 @@ class TestRBAC:
         # 测试创建客户
         response = requests.post(
             f"{base_url}/customers",
-            json={"name": "测试客户", "sales_rep_id": 1},
+            json={"name": "测试客户", "sales_rep_id": 122},
             headers={"Authorization": f"Bearer {token}"},
         )
         assert response.status_code == 200
@@ -49,7 +49,7 @@ class TestRBAC:
         # 运营经理可以创建客户
         response = requests.post(
             f"{base_url}/customers",
-            json={"name": "测试客户", "sales_rep_id": 1},
+            json={"name": "测试客户", "sales_rep_id": 122},
             headers={"Authorization": f"Bearer {token}"},
         )
         assert response.status_code == 200
@@ -68,10 +68,10 @@ class TestRBAC:
         """销售人员只能看自己客户"""
         token = test_tokens["sales"]
 
-        # 创建一个属于sales的客户
+        # 创建一个属于sales的客户（sales user_id = 128）
         response = requests.post(
             f"{base_url}/customers",
-            json={"name": "销售客户", "sales_rep_id": 999},  # 假设sales的user_id是999
+            json={"name": "销售客户", "sales_rep_id": 128},
             headers={
                 "Authorization": f"Bearer {test_tokens['admin']}"
             },  # 使用admin创建
@@ -102,7 +102,7 @@ class TestRBAC:
     def test_unauthorized_access_returns_401(self, base_url):
         """无权限访问返回401"""
         response = requests.get(f"{base_url}/customers")
-        assert_error_response(response, 401, "UNAUTHORIZED")
+        assert_error_response(response, "UNAUTHORIZED")
 
     def test_forbidden_access_returns_403(self, base_url, test_tokens):
         """无权限访问返回403"""
@@ -116,7 +116,7 @@ class TestRBAC:
         )
 
         if response.status_code == 403:
-            assert_error_response(response, 403, "FORBIDDEN")
+            assert_error_response(response, "FORBIDDEN")
 
     def test_permission_wildcard_matching(self, base_url, test_tokens):
         """权限通配符匹配"""

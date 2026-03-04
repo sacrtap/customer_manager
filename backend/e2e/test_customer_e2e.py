@@ -4,6 +4,7 @@
 
 import pytest
 import requests
+import uuid
 from test_helpers import (
     APIClient,
     get_test_users,
@@ -19,14 +20,15 @@ class TestCustomerCRUD:
     def test_create_customer_success(self, base_url, test_tokens):
         """创建客户成功"""
         token = test_tokens["admin"]
+        customer_code = f"E2E{uuid.uuid4().hex[:6]}"
 
         response = requests.post(
             f"{base_url}/customers",
             json={
                 "name": "E2E测试客户",
-                "code": "E2E001",
+                "code": customer_code,
                 "industry": "科技",
-                "sales_rep_id": 1,
+                "sales_rep_id": 122,
                 "tier_level": "A",
                 "annual_consumption": 100000.00,
                 "contact_person": "测试联系人",
@@ -41,7 +43,7 @@ class TestCustomerCRUD:
         data = response.json()["data"]
         assert data["id"] is not None
         assert data["name"] == "E2E测试客户"
-        assert data["code"] == "E2E001"
+        assert data["code"] == customer_code
 
     def test_get_customer_detail(self, base_url, test_tokens):
         """查看客户详情"""
@@ -181,7 +183,7 @@ class TestCustomerCRUD:
 
         assert_api_response(response, 200)
 
-        data = response.json.json()["data"]
+        data = response.json()["data"]
         assert "items" in data
 
     def test_amount_range_filter(self, base_url, test_tokens):

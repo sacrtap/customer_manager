@@ -46,23 +46,24 @@ def generate_unique_customer_code(base_code: str = "CUST") -> str:
 
 def assert_api_response(response, expected_status: int = 200, check_data: bool = True):
     """断言API响应"""
-    assert response.status == expected_status, (
-        f"Expected status {expected_status}, got {response.status}"
+    assert response.status_code == expected_status, (
+        f"Expected status {expected_status}, got {response.status_code}"
     )
 
     if check_data:
-        assert "data" in response.json or "error" not in response.json, (
+        json_data = response.json() if hasattr(response, "json") else response.json
+        assert "data" in json_data or "error" not in json_data, (
             f"Response should contain 'data' or 'error'"
         )
 
 
 def assert_error_response(response, expected_code: str, expected_message: str = None):
     """断言错误响应"""
-    assert response.status >= 400, (
-        f"Expected error status >= 400, got {response.status}"
+    assert response.status_code >= 400, (
+        f"Expected error status >= 400, got {response.status_code}"
     )
 
-    response_json = response.json if hasattr(response, "json") else response.body
+    response_json = response.json() if hasattr(response, "json") else response.body
     assert "error" in response_json, "Response should contain 'error'"
 
     if expected_code:
