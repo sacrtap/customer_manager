@@ -1,214 +1,684 @@
-<!-- frontend/src/views/Dashboard.vue -->
 <template>
   <div class="dashboard">
-    <a-row :gutter="16">
-      <!-- 欢迎卡片 -->
-      <a-col :span="24">
-        <a-card class="welcome-card">
-          <template #extra>
-            <a-space align="center">
-              <a-avatar :size="64" :style="{ backgroundColor: '#1890ff' }">
-                {{ userInfo.real_name?.charAt(0) }}
-              </a-avatar>
-              <div>
-                <div class="welcome-title">
-                  欢迎回来，{{ userInfo.real_name }}!
-                </div>
-                <div class="welcome-subtitle">
-                  {{ roleText }} | {{ userInfo.email }}
-                </div>
-              </div>
-            </a-space>
-          </template>
-        </a-card>
-      </a-col>
-
-      <!-- 快捷入口 -->
-      <a-col :span="6">
-        <a-card class="quick-link-card" hoverable>
-          <template #extra>
-            <a-icon type="icon-user-group" :size="32" />
-          </template>
-          <div class="card-content" @click="goToCustomerList">
-            <div class="card-title">客户管理</div>
-            <div class="card-desc">管理客户数据</div>
+    <!-- 欢迎横幅 -->
+    <div class="welcome-banner">
+      <div class="welcome-content">
+        <h2 class="welcome-title">👋 欢迎回来，{{ userInfo.real_name }}</h2>
+        <p class="welcome-subtitle">
+          今天是 {{ currentDate }}，以下是您的运营概览
+        </p>
+        <div class="welcome-stats">
+          <div class="welcome-stat">
+            <span class="welcome-stat-value">48</span>
+            <span class="welcome-stat-label">待处理预警</span>
           </div>
-        </a-card>
-      </a-col>
-
-      <a-col :span="6" v-if="hasPermission('customer.import')">
-        <a-card class="quick-link-card" hoverable>
-          <template #extra>
-            <a-icon type="icon-import" :size="32" />
-          </template>
-          <div class="card-content" @click="goToCustomerImport">
-            <div class="card-title">批量导入</div>
-            <div class="card-desc">Excel 数据导入</div>
+          <div class="welcome-stat">
+            <span class="welcome-stat-value">12</span>
+            <span class="welcome-stat-label">本月已唤醒</span>
           </div>
-        </a-card>
-      </a-col>
-
-      <a-col :span="6" v-if="hasPermission('system.log.view')">
-        <a-card class="quick-link-card" hoverable>
-          <template #extra>
-            <a-icon type="icon-history" :size="32" />
-          </template>
-          <div class="card-content" @click="goToSystemLogs">
-            <div class="card-title">操作日志</div>
-            <div class="card-desc">查看操作记录</div>
+          <div class="welcome-stat">
+            <span class="welcome-stat-value">¥2.4M</span>
+            <span class="welcome-stat-label">本月结算金额</span>
           </div>
-        </a-card>
-      </a-col>
+        </div>
+      </div>
+    </div>
 
-      <a-col :span="6" v-if="hasPermission('user.view')">
-        <a-card class="quick-link-card" hoverable>
-          <template #extra>
-            <a-icon type="icon-user" :size="32" />
-          </template>
-          <div class="card-content" @click="goToSystemUsers">
-            <div class="card-title">用户管理</div>
-            <div class="card-desc">管理系统用户</div>
+    <!-- 统计卡片 -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon blue">
+            <icon-user-group />
           </div>
-        </a-card>
-      </a-col>
-    </a-row>
+          <div class="stat-trend up">
+            <icon-arrow-up />
+            <span>+2.5%</span>
+          </div>
+        </div>
+        <div class="stat-value">1,320</div>
+        <div class="stat-label">客户总数</div>
+      </div>
 
-    <!-- 最近操作记录 -->
-    <a-row :gutter="16" style="margin-top: 16px;">
-      <a-col :span="24">
-        <a-card title="最近操作" class="recent-operations">
-          <a-table
-            :columns="logColumns"
-            :data="recentOperations"
-            :loading="loading"
-            :pagination="false"
-          />
-        </a-card>
-      </a-col>
-    </a-row>
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon green">
+            <icon-check-circle />
+          </div>
+          <div class="stat-trend up">
+            <icon-arrow-up />
+            <span>+5.2%</span>
+          </div>
+        </div>
+        <div class="stat-value">1,089</div>
+        <div class="stat-label">活跃客户</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon orange">
+            <icon-exclamation-circle />
+          </div>
+          <div class="stat-trend down">
+            <icon-arrow-down />
+            <span>-1.2%</span>
+          </div>
+        </div>
+        <div class="stat-value">48</div>
+        <div class="stat-label">风险客户</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon red">
+            <icon-close-circle />
+          </div>
+          <div class="stat-trend down">
+            <icon-arrow-down />
+            <span>-3.8%</span>
+          </div>
+        </div>
+        <div class="stat-value">183</div>
+        <div class="stat-label">僵尸客户</div>
+      </div>
+    </div>
+
+    <!-- 图表区域 -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">客户健康度趋势</span>
+          <div class="chart-actions">
+            <a-radio-group type="button" size="small" v-model="trendPeriod">
+              <a-radio value="week">本周</a-radio>
+              <a-radio value="month">本月</a-radio>
+              <a-radio value="quarter">本季</a-radio>
+            </a-radio-group>
+          </div>
+        </div>
+        <div ref="trendChart" class="chart-container"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">客户价值分布</span>
+        </div>
+        <div ref="tierChart" class="chart-container-small"></div>
+      </div>
+    </div>
+
+    <!-- 底部区域 -->
+    <div class="bottom-grid">
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-title">⚠️ 风险客户预警</span>
+          <span class="view-all" @click="goToRiskList">查看全部</span>
+        </div>
+        <a-table
+          :columns="riskColumns"
+          :data="riskData"
+          :pagination="false"
+          size="small"
+        >
+          <template #tier="{ record }">
+            <span :class="['tier-badge', record.tier]">{{ record.tier }}</span>
+          </template>
+          <template #riskLevel="{ record }">
+            <span :class="['risk-badge', record.riskLevel]">
+              <icon-exclamation-circle v-if="record.riskLevel === 'high'" />
+              <icon-minus-circle v-else-if="record.riskLevel === 'medium'" />
+              <icon-info-circle v-else />
+              {{
+                record.riskLevel === 'high'
+                  ? '高风险'
+                  : record.riskLevel === 'medium'
+                    ? '中风险'
+                    : '低风险'
+              }}
+            </span>
+          </template>
+          <template #action>
+            <a-button type="text" size="mini">查看</a-button>
+          </template>
+        </a-table>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-title">📋 最近结算记录</span>
+          <span class="view-all" @click="goToBillingList">查看全部</span>
+        </div>
+        <a-table
+          :columns="billingColumns"
+          :data="billingData"
+          :pagination="false"
+          size="small"
+        >
+          <template #status="{ record }">
+            <a-tag
+              :color="
+                record.status === '已发送'
+                  ? 'green'
+                  : record.status === '待发送'
+                    ? 'orange'
+                    : 'red'
+              "
+            >
+              {{ record.status }}
+            </a-tag>
+          </template>
+          <template #action>
+            <a-button type="text" size="mini">详情</a-button>
+          </template>
+        </a-table>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Message } from '@arco-design/web-vue'
 import { useUserStore } from '@/stores/user'
-import type { OperationLog } from '@/types/log'
+import * as echarts from 'echarts'
+import dayjs from 'dayjs'
 
 const router = useRouter()
 const userStore = useUserStore()
 
-const loading = ref(false)
-const recentOperations = ref<OperationLog[]>([])
+const trendPeriod = ref('month')
+const trendChart = ref<HTMLElement | null>(null)
+const tierChart = ref<HTMLElement | null>(null)
+let trendChartInstance: echarts.ECharts | null = null
+let tierChartInstance: echarts.ECharts | null = null
 
 // 用户信息
-const userInfo = computed(() => userStore.userInfo)
+const userInfo = computed(() => userStore.userInfo || { real_name: '用户' })
 
-// 角色文本
-const roleText = computed(() => {
-  if (!userInfo.value) return ''
-  const roleMap: Record<string, string> = {
-    'admin': '系统管理员',
-    'manager': '运营经理',
-    'specialist': '运营专员',
-    'sales': '销售人员'
-  }
-  return roleMap[userInfo.value.role] || ''
+// 当前日期
+const currentDate = computed(() => {
+  return dayjs().format('YYYY年M月D日')
 })
 
-// 权限检查
-const hasPermission = (permission: string) => {
-  return userStore.hasPermission(permission)
-}
-
-// 导航方法
-const goToCustomerList = () => router.push('/customers')
-const goToCustomerImport = () => router.push('/customers/import')
-const goToSystemLogs = () => router.push('/system/logs')
-const goToSystemUsers = () => router.push('/system/users')
-
-// 表格列定义
-const logColumns = [
-  { title: '操作类型', dataIndex: 'operation_type', width: 150 },
-  { title: '目标', dataIndex: 'target_type', width: 120 },
-  { title: '操作时间', dataIndex: 'created_at', width: 180 },
-  { title: 'IP 地址', dataIndex: 'ip_address', width: 140 }
+// 风险客户数据
+const riskColumns = [
+  { title: '客户名称', dataIndex: 'name', width: 150 },
+  { title: '等级', dataIndex: 'tier', slotName: 'tier', width: 60, align: 'center' },
+  { title: '未使用天数', dataIndex: 'days', width: 100, align: 'center' },
+  { title: '风险等级', dataIndex: 'riskLevel', slotName: 'riskLevel', width: 100 },
+  { title: '操作', slotName: 'action', width: 60, align: 'center' }
 ]
 
-// 加载最近操作
-const loadRecentOperations = async () => {
-  loading.value = true
-  try {
-    // TODO: 实现获取最近操作的 API 调用
-    // const response = await logApi.list({ page: 1, size: 5 })
-    // recentOperations.value = response.data.items
-    recentOperations.value = []
-  } catch (error) {
-    Message.error('加载最近操作失败')
-  } finally {
-    loading.value = false
+const riskData = [
+  { name: 'XX 科技有限公司', tier: 'S', days: 14, riskLevel: 'high' },
+  { name: 'YY 贸易集团', tier: 'A', days: 10, riskLevel: 'high' },
+  { name: 'ZZ 建设公司', tier: 'B', days: 8, riskLevel: 'medium' },
+  { name: 'AA 装饰公司', tier: 'A', days: 7, riskLevel: 'medium' },
+  { name: 'BB 房产中介', tier: 'C', days: 12, riskLevel: 'low' }
+]
+
+// 结算记录数据
+const billingColumns = [
+  { title: '月份', dataIndex: 'month', width: 80 },
+  { title: '客户数', dataIndex: 'count', width: 80, align: 'center' },
+  { title: '金额', dataIndex: 'amount', width: 120 },
+  { title: '状态', dataIndex: 'status', slotName: 'status', width: 80 },
+  { title: '操作', slotName: 'action', width: 60, align: 'center' }
+]
+
+const billingData = [
+  { month: '2026-02', count: 1280, amount: '¥2,456,800', status: '已发送' },
+  { month: '2026-01', count: 1275, amount: '¥2,234,600', status: '已发送' },
+  { month: '2025-12', count: 1268, amount: '¥2,567,900', status: '已发送' },
+  { month: '2025-11', count: 1255, amount: '¥2,123,400', status: '异常' },
+  { month: '2025-10', count: 1250, amount: '¥2,345,200', status: '已发送' }
+]
+
+// 导航方法
+const goToRiskList = () => router.push('/health/risks')
+const goToBillingList = () => router.push('/billing/list')
+
+// 初始化趋势图
+const initTrendChart = () => {
+  if (!trendChart.value) return
+
+  trendChartInstance = echarts.init(trendChart.value)
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'cross' }
+    },
+    legend: {
+      data: ['活跃客户', '风险客户', '僵尸客户'],
+      bottom: 0
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '15%',
+      top: '10%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        name: '活跃客户',
+        type: 'line',
+        smooth: true,
+        data: [980, 1020, 1050, 1080, 1060, 1089, 1100, 1120, 1150, 1180, 1200, 1220],
+        areaStyle: { opacity: 0.1 },
+        itemStyle: { color: '#00b42a' }
+      },
+      {
+        name: '风险客户',
+        type: 'line',
+        smooth: true,
+        data: [45, 42, 40, 48, 52, 48, 46, 44, 42, 40, 38, 36],
+        itemStyle: { color: '#ff7d00' }
+      },
+      {
+        name: '僵尸客户',
+        type: 'line',
+        smooth: true,
+        data: [200, 195, 190, 185, 188, 183, 180, 178, 176, 174, 172, 170],
+        itemStyle: { color: '#f53f3f' }
+      }
+    ]
   }
+  trendChartInstance.setOption(option)
+}
+
+// 初始化价值分布图
+const initTierChart = () => {
+  if (!tierChart.value) return
+
+  tierChartInstance = echarts.init(tierChart.value)
+  const option = {
+    tooltip: {
+      trigger: 'item',
+      formatter: '{b}: {c} ({d}%)'
+    },
+    legend: {
+      orient: 'vertical',
+      right: '5%',
+      top: 'center',
+      data: ['S级', 'A级', 'B级', 'C级', 'D级']
+    },
+    series: [
+      {
+        name: '客户价值分布',
+        type: 'pie',
+        radius: ['45%', '75%'],
+        center: ['35%', '50%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 8,
+          borderColor: '#fff',
+          borderWidth: 2
+        },
+        label: {
+          show: false
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 16,
+            fontWeight: 'bold'
+          }
+        },
+        data: [
+          { value: 12, name: 'S级', itemStyle: { color: '#ff7d00' } },
+          { value: 45, name: 'A级', itemStyle: { color: '#165dff' } },
+          { value: 128, name: 'B级', itemStyle: { color: '#00b42a' } },
+          { value: 435, name: 'C级', itemStyle: { color: '#86909c' } },
+          { value: 700, name: 'D级', itemStyle: { color: '#c9cdd4' } }
+        ]
+      }
+    ]
+  }
+  tierChartInstance.setOption(option)
+}
+
+// 窗口大小调整
+const handleResize = () => {
+  trendChartInstance?.resize()
+  tierChartInstance?.resize()
 }
 
 onMounted(() => {
-  loadRecentOperations()
+  initTrendChart()
+  initTierChart()
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+  trendChartInstance?.dispose()
+  tierChartInstance?.dispose()
 })
 </script>
 
 <style scoped lang="scss">
 .dashboard {
   padding: 24px;
+}
 
-  .welcome-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* 欢迎横幅 */
+.welcome-banner {
+  background: linear-gradient(135deg, #165dff 0%, #2b6de5 50%, #4080ff 100%);
+  border-radius: 16px;
+  padding: 32px;
+  color: white;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
 
-    :deep(.arco-card-body) {
-      padding: 32px;
-    }
+.welcome-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 60%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  transform: rotate(-15deg);
+}
 
-    .welcome-title {
-      font-size: 24px;
-      font-weight: 600;
-      color: #ffffff;
-      margin-bottom: 8px;
-    }
+.welcome-content {
+  position: relative;
+  z-index: 1;
+}
 
-    .welcome-subtitle {
-      font-size: 16px;
-      color: #e0e0e0;
-    }
+.welcome-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.welcome-subtitle {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 20px;
+}
+
+.welcome-stats {
+  display: flex;
+  gap: 40px;
+}
+
+.welcome-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.welcome-stat-value {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.welcome-stat-label {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+/* 统计卡片 */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+}
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.stat-icon.blue {
+  background: rgba(22, 93, 255, 0.1);
+  color: #165dff;
+}
+
+.stat-icon.green {
+  background: rgba(0, 180, 42, 0.1);
+  color: #00b42a;
+}
+
+.stat-icon.orange {
+  background: rgba(255, 125, 0, 0.1);
+  color: #ff7d00;
+}
+
+.stat-icon.red {
+  background: rgba(245, 63, 63, 0.1);
+  color: #f53f3f;
+}
+
+.stat-trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.stat-trend.up {
+  color: #00b42a;
+}
+
+.stat-trend.down {
+  color: #f53f3f;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1d2129;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #86909c;
+}
+
+/* 图表区域 */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.chart-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.chart-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.chart-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.chart-container {
+  height: 300px;
+}
+
+.chart-container-small {
+  height: 300px;
+}
+
+/* 底部区域 */
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.table-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.table-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.view-all {
+  font-size: 14px;
+  color: #165dff;
+  cursor: pointer;
+
+  &:hover {
+    color: #4080ff;
+  }
+}
+
+/* 风险客户标签 */
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.risk-badge.high {
+  background: rgba(245, 63, 63, 0.1);
+  color: #f53f3f;
+}
+
+.risk-badge.medium {
+  background: rgba(255, 125, 0, 0.1);
+  color: #ff7d00;
+}
+
+.risk-badge.low {
+  background: rgba(255, 202, 43, 0.1);
+  color: #f7ba1e;
+}
+
+/* 价值等级标签 */
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.tier-badge.S {
+  background: linear-gradient(135deg, #ff7d00 0%, #ff9a2e 100%);
+  color: white;
+}
+
+.tier-badge.A {
+  background: linear-gradient(135deg, #165dff 0%, #4080ff 100%);
+  color: white;
+}
+
+.tier-badge.B {
+  background: linear-gradient(135deg, #00b42a 0%, #23c343 100%);
+  color: white;
+}
+
+.tier-badge.C {
+  background: linear-gradient(135deg, #86909c 0%, #a5abb3 100%);
+  color: white;
+}
+
+.tier-badge.D {
+  background: linear-gradient(135deg, #c9cdd4 0%, #e5e6eb 100%);
+  color: #4e5969;
+}
+
+/* 响应式 */
+@media (max-width: 1200px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .quick-link-card {
-    transition: all 0.3s;
-    text-align: center;
-    padding: 24px 16px;
-
-    &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    }
-
-    .card-content {
-      cursor: pointer;
-    }
-
-    .card-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-top: 12px;
-      margin-bottom: 4px;
-    }
-
-    .card-desc {
-      font-size: 14px;
-      color: #86909c;
-    }
+  .charts-grid {
+    grid-template-columns: 1fr;
   }
 
-  .recent-operations {
-    margin-top: 24px;
+  .bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-stats {
+    flex-wrap: wrap;
+    gap: 20px;
   }
 }
 </style>

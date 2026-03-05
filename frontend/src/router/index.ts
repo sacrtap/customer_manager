@@ -68,6 +68,36 @@ const routes: AppRouteRecordRaw[] = [
         }
       },
       {
+        path: 'customers/:id',
+        name: 'CustomerDetail',
+        component: () => import('@/views/customer/CustomerDetail.vue'),
+        meta: {
+          title: '客户详情',
+          requiresAuth: true,
+          permissions: ['customer.view']
+        }
+      },
+      {
+        path: 'customers/create',
+        name: 'CustomerCreate',
+        component: () => import('@/views/customer/CustomerForm.vue'),
+        meta: {
+          title: '新增客户',
+          requiresAuth: true,
+          permissions: ['customer.create']
+        }
+      },
+      {
+        path: 'customers/:id/edit',
+        name: 'CustomerEdit',
+        component: () => import('@/views/customer/CustomerForm.vue'),
+        meta: {
+          title: '编辑客户',
+          requiresAuth: true,
+          permissions: ['customer.update']
+        }
+      },
+      {
         path: 'system/users',
         name: 'UserManage',
         component: () => import('@/views/system/UserManage.vue'),

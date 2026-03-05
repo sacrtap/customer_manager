@@ -1,117 +1,275 @@
-<!-- frontend/src/layouts/MainLayout.vue -->
 <template>
   <div class="main-layout">
     <a-layout>
-      <!-- 顶部导航栏 -->
-      <a-layout-header class="layout-header">
-        <div class="header-left">
-          <a-space>
-            <a-icon type="icon-dashboard" :size="24" />
-            <span class="app-title">客户运营中台</span>
-          </a-space>
+      <!-- 侧边栏菜单 -->
+      <a-layout-sider
+        :width="240"
+        :collapsed-width="64"
+        collapsible
+        breakpoint="xl"
+        class="layout-sider"
+      >
+        <div class="sidebar-header">
+          <div class="sidebar-logo">
+            <icon-user-group />
+          </div>
+          <span v-if="!collapsed" class="sidebar-title">客户运营中台</span>
         </div>
 
-        <div class="header-right">
-          <a-space>
-            <!-- 通知图标 -->
-            <a-badge :count="notificationCount" :max-count="99">
-              <a-button shape="circle" type="text" @click="showNotifications">
-                <a-icon type="icon-notification" :size="20" />
-              </a-button>
-            </a-badge>
+        <a-menu
+          :selected-keys="selectedMenuKeys"
+          :default-selected-keys="['dashboard']"
+          @menu-item-click="handleMenuSelect"
+          class="sidebar-menu"
+        >
+          <a-menu-item key="dashboard">
+            <template #icon>
+              <icon-home />
+            </template>
+            工作台
+          </a-menu-item>
 
-            <!-- 用户信息下拉菜单 -->
-            <a-dropdown @select="handleMenuSelect">
-              <div class="user-info">
-                <a-avatar :size="32">
-                  {{ userInfo.real_name?.charAt(0) }}
-                </a-avatar>
-                <span class="user-name">{{ userInfo.real_name }}</span>
-                <a-icon type="icon-down" />
-              </div>
+          <a-sub-menu key="customer">
+            <template #icon>
+              <icon-user-group />
+            </template>
+            <template #title>客户管理</template>
+            <a-menu-item key="customer-list">
+              客户列表
+            </a-menu-item>
+            <a-menu-item
+              v-if="hasPermission('customer.import')"
+              key="customer-import"
+            >
+              批量导入
+            </a-menu-item>
+          </a-sub-menu>
 
-              <template #content>
-                <a-dropdown-menu>
-                  <a-dropdown-menu-item key="profile">
-                    <a-icon type="icon-user" />
-                    个人信息
-                  </a-dropdown-menu-item>
-                  <a-dropdown-menu-item key="change-password">
-                    <a-icon type="icon-lock" />
-                    修改密码
-                  </a-dropdown-menu-item>
-                  <a-dropdown-menu-item key="divider" />
-                  <a-dropdown-menu-item key="logout">
-                    <a-icon type="icon-logout" />
-                    退出登录
-                  </a-dropdown-menu-item>
-                </a-dropdown-menu>
-              </template>
-            </a-dropdown>
-          </a-space>
-        </div>
-      </a-layout-header>
+          <a-sub-menu
+            v-if="hasAnyPermission(['health.view', 'health.risk', 'health.zombie'])"
+            key="health"
+          >
+            <template #icon>
+              <icon-bar-chart />
+            </template>
+            <template #title>健康度监控</template>
+            <a-menu-item
+              v-if="hasPermission('health.view')"
+              key="health-dashboard"
+            >
+              健康度仪表盘
+            </a-menu-item>
+            <a-menu-item
+              v-if="hasPermission('health.risk')"
+              key="health-risks"
+            >
+              风险客户
+            </a-menu-item>
+            <a-menu-item
+              v-if="hasPermission('health.zombie')"
+              key="health-zombies"
+            >
+              僵尸客户
+            </a-menu-item>
+          </a-sub-menu>
+
+          <a-sub-menu
+            v-if="hasAnyPermission(['tier.view', 'tier.config'])"
+            key="tier"
+          >
+            <template #icon>
+              <icon-star />
+            </template>
+            <template #title>价值评估</template>
+            <a-menu-item
+              v-if="hasPermission('tier.config')"
+              key="tier-config"
+            >
+              等级配置
+            </a-menu-item>
+            <a-menu-item
+              v-if="hasPermission('tier.view')"
+              key="tier-history"
+            >
+              定级历史
+            </a-menu-item>
+          </a-sub-menu>
+
+          <a-sub-menu
+            v-if="hasAnyPermission(['pricing.view', 'pricing.edit'])"
+            key="pricing"
+          >
+            <template #icon>
+              <icon-file />
+            </template>
+            <template #title>定价管理</template>
+            <a-menu-item
+              v-if="hasPermission('pricing.view')"
+              key="pricing-configs"
+            >
+              价格配置
+            </a-menu-item>
+            <a-menu-item
+              v-if="hasPermission('pricing.view')"
+              key="pricing-bands"
+            >
+              价格区间
+            </a-menu-item>
+            <a-menu-item
+              v-if="hasPermission('pricing.view')"
+              key="pricing-strategies"
+            >
+              定价策略
+            </a-menu-item>
+          </a-sub-menu>
+
+          <a-sub-menu
+            v-if="hasAnyPermission(['billing.view', 'billing.create', 'billing.edit'])"
+            key="billing"
+          >
+            <template #icon>
+              <icon-file />
+            </template>
+            <template #title>结算管理</template>
+            <a-menu-item
+              v-if="hasPermission('billing.create')"
+              key="billing-generate"
+            >
+              结算单生成
+            </a-menu-item>
+            <a-menu-item
+              v-if="hasPermission('billing.view')"
+              key="billing-list"
+            >
+              结算单列表
+            </a-menu-item>
+            <a-menu-item
+              v-if="hasPermission('billing.edit')"
+              key="billing-exceptions"
+            >
+              异常处理
+            </a-menu-item>
+          </a-sub-menu>
+
+          <a-sub-menu
+            v-if="hasAnyPermission(['transfer.view', 'transfer.create'])"
+            key="transfer"
+          >
+            <template #icon>
+              <icon-swap />
+            </template>
+            <template #title>客户转移</template>
+            <a-menu-item
+              v-if="hasPermission('transfer.create')"
+              key="transfer-create"
+            >
+              客户转移
+            </a-menu-item>
+            <a-menu-item
+              v-if="hasPermission('transfer.view')"
+              key="transfer-history"
+            >
+              转移历史
+            </a-menu-item>
+          </a-sub-menu>
+
+          <a-menu-item
+            v-if="hasPermission('system.log.view')"
+            key="system-logs"
+          >
+            <template #icon>
+              <icon-history />
+            </template>
+            操作日志
+          </a-menu-item>
+
+          <a-sub-menu
+            v-if="hasAnyPermission(['user.view', 'rbac.role'])"
+            key="system"
+          >
+            <template #icon>
+              <icon-settings />
+            </template>
+            <template #title>系统管理</template>
+            <a-menu-item
+              v-if="hasPermission('user.view')"
+              key="system-users"
+            >
+              用户管理
+            </a-menu-item>
+            <a-menu-item
+              v-if="hasPermission('rbac.role')"
+              key="system-roles"
+            >
+              角色管理
+            </a-menu-item>
+            <a-menu-item
+              v-if="hasPermission('system.permission')"
+              key="system-permissions"
+            >
+              权限配置
+            </a-menu-item>
+          </a-sub-menu>
+        </a-menu>
+      </a-layout-sider>
 
       <a-layout>
-        <!-- 侧边栏菜单 -->
-        <a-layout-sider collapsible breakpoint="xl">
-          <a-menu
-            :selected-keys="selectedMenuKeys"
-            :default-selected-keys="['dashboard']"
-            @menu-item-click="handleMenuSelect"
-          >
-            <a-menu-item key="dashboard">
-              <template #icon>
-                <a-icon type="icon-home" />
-              </template>
-              工作台
-            </a-menu-item>
+        <!-- 顶部导航栏 -->
+        <a-layout-header class="layout-header">
+          <div class="header-left">
+            <a-space>
+              <a-breadcrumb>
+                <a-breadcrumb-item>首页</a-breadcrumb-item>
+                <a-breadcrumb-item>{{ currentPageTitle }}</a-breadcrumb-item>
+              </a-breadcrumb>
+            </a-space>
+          </div>
 
-            <a-sub-menu key="customer">
-              <template #icon>
-                <a-icon type="icon-user-group" />
-              </template>
-              <template #title>客户管理</template>
-              <a-menu-item key="customer-list">
-                客户列表
-              </a-menu-item>
-              <a-menu-item
-                v-if="hasPermission('customer.import')"
-                key="customer-import"
-              >
-                批量导入
-              </a-menu-item>
-            </a-sub-menu>
+          <div class="header-right">
+            <a-space>
+              <!-- 通知图标 -->
+              <a-badge :count="notificationCount" :max-count="99">
+                <a-button shape="circle" type="text" @click="showNotifications" class="header-icon-btn">
+                  <icon-notification />
+                </a-button>
+              </a-badge>
 
-            <a-sub-menu
-              v-if="hasAnyPermission(['user.view', 'rbac.role', 'system.log.view'])"
-              key="system"
-            >
-              <template #icon>
-                <a-icon type="icon-settings" />
-              </template>
-              <template #title>系统管理</template>
-              <a-menu-item
-                v-if="hasPermission('user.view')"
-                key="system-users"
-              >
-                用户管理
-              </a-menu-item>
-              <a-menu-item
-                v-if="hasPermission('rbac.role')"
-                key="system-roles"
-              >
-                角色管理
-              </a-menu-item>
-              <a-menu-item
-                v-if="hasPermission('system.log.view')"
-                key="system-logs"
-              >
-                操作日志
-              </a-menu-item>
-            </a-sub-menu>
-          </a-menu>
-        </a-layout-sider>
+              <!-- 帮助图标 -->
+              <a-button shape="circle" type="text" class="header-icon-btn">
+                <icon-question-circle />
+              </a-button>
+
+              <!-- 用户信息下拉菜单 -->
+              <a-dropdown @select="handleMenuSelect">
+                <div class="user-info">
+                  <a-avatar :size="32" :style="{ background: 'linear-gradient(135deg, #165dff 0%, #4080ff 100%)' }">
+                    {{ userInfo.real_name?.charAt(0) }}
+                  </a-avatar>
+                  <span class="user-name">{{ userInfo.real_name }}</span>
+                  <icon-down />
+                </div>
+
+                <template #content>
+                  <a-dropdown-menu>
+                    <a-dropdown-menu-item key="profile">
+                      <icon-user />
+                      个人信息
+                    </a-dropdown-menu-item>
+                    <a-dropdown-menu-item key="change-password">
+                      <icon-lock />
+                      修改密码
+                    </a-dropdown-menu-item>
+                    <a-dropdown-menu-item key="divider" />
+                    <a-dropdown-menu-item key="logout">
+                      <icon-logout />
+                      退出登录
+                    </a-dropdown-menu-item>
+                  </a-dropdown-menu>
+                </template>
+              </a-dropdown>
+            </a-space>
+          </div>
+        </a-layout-header>
 
         <!-- 内容区域 -->
         <a-layout-content class="layout-content">
@@ -133,9 +291,57 @@ const route = useRoute()
 const userStore = useUserStore()
 
 const notificationCount = ref(0)
+const collapsed = ref(false)
 
 // 用户信息
-const userInfo = computed(() => userStore.userInfo)
+const userInfo = computed(() => userStore.userInfo || { real_name: '用户' })
+
+// 当前页面标题
+const currentPageTitle = computed(() => {
+  const path = route.path
+  if (path === '/dashboard') return '工作台'
+  if (path.startsWith('/customers')) {
+    if (path === '/customers') return '客户列表'
+    if (path === '/customers/import') return '批量导入'
+    return '客户管理'
+  }
+  if (path.startsWith('/health')) {
+    if (path === '/health/dashboard') return '健康度仪表盘'
+    if (path === '/health/risks') return '风险客户'
+    if (path === '/health/zombies') return '僵尸客户'
+    return '健康度监控'
+  }
+  if (path.startsWith('/tiers')) {
+    if (path === '/tiers/config') return '等级配置'
+    if (path === '/tiers/history') return '定级历史'
+    return '价值评估'
+  }
+  if (path.startsWith('/pricing')) {
+    if (path === '/pricing/configs') return '价格配置'
+    if (path === '/pricing/bands') return '价格区间'
+    if (path === '/pricing/strategies') return '定价策略'
+    return '定价管理'
+  }
+  if (path.startsWith('/billing')) {
+    if (path === '/billing/generate') return '结算单生成'
+    if (path === '/billing/list') return '结算单列表'
+    if (path === '/billing/exceptions') return '异常处理'
+    return '结算管理'
+  }
+  if (path.startsWith('/transfers')) {
+    if (path === '/transfers/new') return '客户转移'
+    if (path === '/transfers/history') return '转移历史'
+    return '客户转移'
+  }
+  if (path.startsWith('/system')) {
+    if (path === '/system/users') return '用户管理'
+    if (path === '/system/roles') return '角色管理'
+    if (path === '/system/logs') return '操作日志'
+    if (path === '/system/permissions') return '权限配置'
+    return '系统管理'
+  }
+  return '首页'
+})
 
 // 选中的菜单
 const selectedMenuKeys = computed(() => {
@@ -144,11 +350,35 @@ const selectedMenuKeys = computed(() => {
   if (path.startsWith('/customers')) {
     if (path === '/customers') return ['customer', 'customer-list']
     if (path === '/customers/import') return ['customer', 'customer-import']
-    }
+  }
+  if (path.startsWith('/health')) {
+    if (path === '/health/dashboard') return ['health', 'health-dashboard']
+    if (path === '/health/risks') return ['health', 'health-risks']
+    if (path === '/health/zombies') return ['health', 'health-zombies']
+  }
+  if (path.startsWith('/tiers')) {
+    if (path === '/tiers/config') return ['tier', 'tier-config']
+    if (path === '/tiers/history') return ['tier', 'tier-history']
+  }
+  if (path.startsWith('/pricing')) {
+    if (path === '/pricing/configs') return ['pricing', 'pricing-configs']
+    if (path === '/pricing/bands') return ['pricing', 'pricing-bands']
+    if (path === '/pricing/strategies') return ['pricing', 'pricing-strategies']
+  }
+  if (path.startsWith('/billing')) {
+    if (path === '/billing/generate') return ['billing', 'billing-generate']
+    if (path === '/billing/list') return ['billing', 'billing-list']
+    if (path === '/billing/exceptions') return ['billing', 'billing-exceptions']
+  }
+  if (path.startsWith('/transfers')) {
+    if (path === '/transfers/new') return ['transfer', 'transfer-create']
+    if (path === '/transfers/history') return ['transfer', 'transfer-history']
+  }
   if (path.startsWith('/system')) {
     if (path === '/system/users') return ['system', 'system-users']
     if (path === '/system/roles') return ['system', 'system-roles']
-    if (path === '/system/logs') return ['system', 'system-logs']
+    if (path === '/system/logs') return ['system-logs']
+    if (path === '/system/permissions') return ['system', 'system-permissions']
   }
   return []
 })
@@ -174,6 +404,45 @@ const handleMenuSelect = (key: string) => {
     case 'customer-import':
       router.push('/customers/import')
       break
+    case 'health-dashboard':
+      router.push('/health/dashboard')
+      break
+    case 'health-risks':
+      router.push('/health/risks')
+      break
+    case 'health-zombies':
+      router.push('/health/zombies')
+      break
+    case 'tier-config':
+      router.push('/tiers/config')
+      break
+    case 'tier-history':
+      router.push('/tiers/history')
+      break
+    case 'pricing-configs':
+      router.push('/pricing/configs')
+      break
+    case 'pricing-bands':
+      router.push('/pricing/bands')
+      break
+    case 'pricing-strategies':
+      router.push('/pricing/strategies')
+      break
+    case 'billing-generate':
+      router.push('/billing/generate')
+      break
+    case 'billing-list':
+      router.push('/billing/list')
+      break
+    case 'billing-exceptions':
+      router.push('/billing/exceptions')
+      break
+    case 'transfer-create':
+      router.push('/transfers/new')
+      break
+    case 'transfer-history':
+      router.push('/transfers/history')
+      break
     case 'system-users':
       router.push('/system/users')
       break
@@ -182,6 +451,9 @@ const handleMenuSelect = (key: string) => {
       break
     case 'system-logs':
       router.push('/system/logs')
+      break
+    case 'system-permissions':
+      router.push('/system/permissions')
       break
     case 'profile':
       router.push('/profile')
@@ -223,41 +495,127 @@ const showNotifications = () => {
   height: 100vh;
   overflow: hidden;
 
+  .layout-sider {
+    background: linear-gradient(180deg, #1d2129 0%, #0a0c10 100%);
+    height: 100vh;
+    overflow: hidden;
+
+    .sidebar-header {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #165dff 0%, #4080ff 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-title {
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .sidebar-menu {
+      padding: 16px 12px;
+      background: transparent;
+      border: none;
+
+      :deep(.arco-menu-item),
+      :deep(.arco-menu-pop-header),
+      :deep(.arco-menu-inline-header) {
+        color: rgba(255, 255, 255, 0.7);
+        border-radius: 8px;
+        margin-bottom: 4px;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.05);
+          color: #ffffff;
+        }
+      }
+
+      :deep(.arco-menu-item.arco-menu-selected) {
+        background: linear-gradient(135deg, #165dff 0%, #2b6de5 100%);
+        color: #ffffff;
+      }
+
+      :deep(.arco-menu-inline-header .arco-icon),
+      :deep(.arco-menu-item .arco-icon) {
+        font-size: 18px;
+      }
+    }
+  }
+
   .layout-header {
-    height: 60px;
+    height: 64px;
     background: #ffffff;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid #e5e6eb;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 24px;
 
     .header-left {
-      .app-title {
-        font-size: 20px;
-        font-weight: 600;
-        color: #1f2937;
-      }
+      display: flex;
+      align-items: center;
     }
 
     .header-right {
+      display: flex;
+      align-items: center;
+
+      .header-icon-btn {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4e5969;
+        transition: all 0.2s;
+
+        &:hover {
+          background: #f2f3f5;
+        }
+      }
+
       .user-info {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         cursor: pointer;
+        padding: 6px 12px;
+        border-radius: 8px;
+        transition: all 0.2s;
+
+        &:hover {
+          background: #f2f3f5;
+        }
 
         .user-name {
           font-size: 14px;
           color: #1d2129;
+          font-weight: 500;
         }
       }
     }
   }
 
   .layout-content {
-    background: #f5f5f5;
-    height: calc(100vh - 60px);
+    background: #f2f3f5;
+    height: calc(100vh - 64px);
     overflow: auto;
   }
 }
