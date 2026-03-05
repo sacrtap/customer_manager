@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios'
+import type { AxiosInstance, AxiosError } from 'axios'
 import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore()
@@ -20,17 +20,22 @@ apiClient.interceptors.request.use(
     }
     return config
   },
-  (error) => {
+  (error: AxiosError) => {
     return Promise.reject(error)
   }
 )
 
 apiClient.interceptors.response.use(
   (response) => {
-    return response
+    // 后端统一返回格式：{ data: {...}, timestamp: "..." }
+    // 前端统一解包，直接返回 data 内容
+    if (response.data && response.data.data !== undefined) {
+      return response.data.data
+    }
+    return response.data
   },
-  (error) => {
-    const errorMessage = error.response?.data?.error?.message || '请求失败'
+  (error: AxiosError) => {
+    const errorMessage = (error.response?.data as any)?.error?.message || '请求失败'
     console.error('API Error:', errorMessage)
     return Promise.reject(new Error(errorMessage))
   }

@@ -5,20 +5,20 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     # Database settings
-    db_type: str = "mysql"  # mysql 或 postgresql
-    db_user: str = "root"
-    db_password: str = "root"
+    db_type: str = "postgresql"  # mysql 或 postgresql
+    db_user: str = "postgres"
+    db_password: str = ""
     db_name: str = "customer_manager"
     db_host: str = "localhost"
-    db_port: str = "3306"  # MySQL 默认 3306
+    db_port: str = "5432"  # PostgreSQL 默认 5432
 
-    # 测试数据库配置
-    test_db_type: str = "mysql"
-    test_db_user: str = "root"
-    test_db_password: str = "root"
+    # 测试数据库配置 - 使用 PostgreSQL
+    test_db_type: str = "postgresql"
+    test_db_user: str = "postgres"
+    test_db_password: str = ""
     test_db_name: str = "customer_manager_test"
     test_db_host: str = "localhost"
-    test_db_port: str = "3306"
+    test_db_port: str = "5432"
 
     @property
     def database_url(self) -> str:
@@ -30,7 +30,9 @@ class Settings(BaseSettings):
     @property
     def asyncpg_url(self) -> str:
         # 测试数据库 URL
-        if self.test_db_type == "mysql":
+        if self.test_db_type == "sqlite":
+            return f"sqlite+aiosqlite:///{self.test_db_name}"
+        elif self.test_db_type == "mysql":
             return f"mysql+aiomysql://{self.test_db_user}:{self.test_db_password}@{self.test_db_host}:{self.test_db_port}/{self.test_db_name}"
         else:
             return f"postgresql+asyncpg://{self.test_db_user}:{self.test_db_password}@{self.test_db_host}:{self.test_db_port}/{self.test_db_name}"

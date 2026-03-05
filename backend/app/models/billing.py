@@ -22,7 +22,14 @@ class Billing(Base):
     customer_name: Mapped[str] = mapped_column(String(255), nullable=False)
     amount: Mapped[float] = mapped_column(Numeric(15, 2), nullable=False)
     status: Mapped[str] = mapped_column(
-        Enum("completed", "pending", "failed"),
+        Enum(
+            "completed",
+            "pending",
+            "failed",
+            name="billing_status_enum",
+            create_constraint=True,
+            metadata=Base.metadata,
+        ),
         default="pending",
         nullable=False,
         index=True,
