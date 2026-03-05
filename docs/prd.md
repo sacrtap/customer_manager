@@ -223,6 +223,118 @@
 - 结算时间从 3 天→2 小时
 - 系统可用性≥99.5%
 
+---
+
+## E2E 测试开发规则（基于实际开发经验）
+
+> 以下规则基于实际 E2E 测试开发中的问题总结，必须严格遵守以避免重复错误。
+
+### Playwright 选择器规则
+
+**1. 选择器必须精确唯一**
+- **问题**: 使用模糊文本选择器（`button:has-text("登录")`）匹配到页面中 3 个按钮
+- **根本原因**: 缺乏对页面 DOM 结构的了解，选择器不够精确
+- **规则**: E2E 测试中，所有选择器必须唯一标识目标元素
+- **实践**: 
+  - ✅ 使用 CSS 类名：`.submit-button`（自定义类）
+  - ✅ 使用 aria 属性：`[aria-label="登录"]`
+  - ✅ 使用 data 属性：`[data-testid="login-button"]`
+  - ❌ 避免模糊文本选择，除非确认唯一性
+
+**2. Arco Design 错误消息类名需区分场景**
+- **问题**: 表单验证错误和全局 API 错误使用相同的 `.arco-message-error` 类名
+- **根本原因**: 不了解 Arco Design 组件库的不同错误展示机制
+- **规则**: 根据 UI 组件库的文档，使用正确的错误消息类名
+- **实践**:
+  - 表单验证：`.arco-form-item-message`（字段级错误）
+  - 全局消息：`.arco-message` / `.arco-message-error`（页面级消息提示）
+  - 错误状态：`.arco-form-item-has-error`（字段错误状态）
+
+### 组件交互规则
+
+**3. 图标导入必须验证存在性**
+- **问题**: 使用 `IconExchange`、`IconLightbulb`、`IconUserSlash` 等 Arco Design 不存在的图标
+- **根本原因**: 未查阅 Arco Design 图标文档就直接使用
+- **规则**: 引用任何 UI 组件库图标前，必须验证该图标存在
+- **实践**:
+  - 访问 Arco Design 官方文档查阅可用图标列表
+  - 使用 IDE 自动补全功能，避免拼写错误
+  - 替代方案：`IconExchange` → `IconSync`，`IconLightbulb` → `IconCompass`
+
+**4. Mock API 路径必须完整匹配**
+- **问题**: 测试中使用 `**/auth/login` mock 路由，但实际 API 路径是 `**/api/v1/auth/login`
+- **根本原因**: Mock 路由的 glob 模式不够精确，导致实际请求未被拦截
+- **规则**: Mock API 路径必须与后端实际 API 路径完全一致
+- **实践**:
+  ```typescript
+  // ❌ 错误：路径不完整
+  await page.route('**/auth/login', ...)
+  
+  // ✅ 正确：完整路径
+  await page.route('**/api/v1/auth/login', ...)
+  ```
+
+**5. Pinia Store 异步函数应返回值**
+- **问题**: `userStore.login()` 函数没有返回 API 响应数据，导致 `await userStore.login()` 后代码无法继续执行
+- **根本原因**: 异步函数设计不完整，未考虑调用方的使用场景
+- **规则**: Store 中的异步操作函数应返回操作结果
+- **实践**:
+  ```typescript
+  // ❌ 错误：无返回值
+  const login = async (username, password) => {
+    const response = await fetch(...)
+    // 处理响应，但不返回
+  }
+  
+  // ✅ 正确：返回响应数据
+  const login = async (username, password) => {
+    const response = await fetch(...)
+    const data = await response.json()
+    // 处理响应
+    return data  // 返回给调用方
+  }
+  ```
+
+**6. Arco Design Checkbox 使用隐藏 input**
+- **问题**: Checkbox 的 `<input type="checkbox">` 元素通过 CSS 隐藏，`toBeVisible()` 断言失败
+- **根本原因**: 不了解 Arco Design Checkbox 的实现方式（隐藏原生 input，使用自定义样式）
+- **规则**: 对于自定义 UI 组件，验证方式需要根据组件实现调整
+- **实践**:
+  ```typescript
+  // ❌ 错误：直接验证 input
+  await expect(page.locator('input[type="checkbox"]')).toBeVisible()
+  
+  // ✅ 正确：验证元素存在或父容器
+  await expect(page.locator('input[type="checkbox"]')).toHaveCount(1)
+  // 或验证自定义容器
+  await expect(page.locator('.arco-checkbox')).toBeVisible()
+  ```
+
+### 测试数据规则
+
+**7. 表单测试数据需满足验证规则**
+- **问题**: 测试使用 `password="wrong"`（5 位）触发表单验证，而非 API 登录失败测试
+- **根本原因**: 不了解表单的验证规则（最小长度 6 位）
+- **规则**: E2E 测试使用的数据必须满足所有前端验证规则
+- **实践**:
+  - 用户名：≥3 位（示例：`testuser`）
+  - 密码：≥6 位（示例：`password123`）
+  - 邮箱：符合正则格式
+  - 手机号：符合正则格式
+
+### 开发环境规则
+
+**8. Vite 缓存可能导致旧代码运行**
+- **问题**: 修复 `IconExchange` 图标后，测试仍然报错，因为 Vite 缓存使用未编译的新代码
+- **根本原因**: Vite 的 HMR（热模块替换）缓存未清理
+- **规则**: 重大代码修改（特别是核心依赖）后，必须清除缓存并重启服务器
+- **实践**:
+  ```bash
+  pkill -f vite              # 停止开发服务器
+  rm -rf node_modules/.vite   # 删除 Vite 缓存
+  npm run dev                 # 重启服务器
+  ```
+
 ### Growth Features（Post-MVP，第二期，6 个月）
 
 **模块 7：用量数据采集**

@@ -99,6 +99,39 @@ const routes: AppRouteRecordRaw[] = [
           icon: 'icon-file',
           permissions: ['system.log.view']
         }
+      },
+      {
+        path: 'pricing/strategies',
+        name: 'PricingStrategyList',
+        component: () => import('@/views/pricing/PricingStrategyList.vue'),
+        meta: {
+          title: '定价策略',
+          requiresAuth: true,
+          icon: 'icon-coins',
+          permissions: ['pricing.view']
+        }
+      },
+      {
+        path: 'pricing/configs',
+        name: 'PricingConfigList',
+        component: () => import('@/views/pricing/PricingConfigList.vue'),
+        meta: {
+          title: '价格配置',
+          requiresAuth: true,
+          icon: 'icon-coins',
+          permissions: ['pricing.view']
+        }
+      },
+      {
+        path: 'pricing/bands',
+        name: 'PriceBandList',
+        component: () => import('@/views/pricing/PriceBandList.vue'),
+        meta: {
+          title: '价格区间',
+          requiresAuth: true,
+          icon: 'icon-coins',
+          permissions: ['pricing.view']
+        }
       }
     ]
   }

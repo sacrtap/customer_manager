@@ -154,10 +154,38 @@ This is a new customer_manager project. The codebase is currently being initiali
     - 表单验证需使用 formRef.validate() 手动触发
 
  7. **路由权限守卫规则** (Vue Router)
-    - 权限检查必须遍历用户权限数组，而非路由meta.permissions数组
+    - 权限检查必须遍历用户权限数组，而非路由 meta.permissions 数组
     - 错误示例：`to.meta.permissions.some(perm => permissions.includes(perm))`
     - 正确示例：`permissions.some(perm => to.meta.permissions.includes(perm))`
     - 通配符'*'权限检查需在用户权限循环中判断，而非在路由权限循环中
+
+ 8. **后端 API 测试规则** (Sanic + SQLAlchemy Async + pytest-asyncio)
+    - **架构限制**: Sanic 测试客户端使用同步模式，与异步 SQLAlchemy 不兼容
+    - **已知问题**:
+      - `RuntimeError: Event loop is closed` - 异步 SQLAlchemy 在 flush() 时事件循环已关闭
+      - `test_session.flush()` 不会被 await，数据不会提交到数据库
+      - 测试使用的事务隔离与 Sanic 蓝图的生产数据库连接不一致
+      - `AttributeError: attached to a different loop` - 事件循环冲突
+    - **根本原因**: Sanic 测试客户端创建自己的事件循环，与 SQLAlchemy 异步引擎的事件循环冲突
+    - **解决方案**:
+      - 使用异步测试函数 (`async def`) 并通过 API 创建测试数据
+      - 避免在测试中使用 `test_session` 创建预置数据
+      - 每个测试通过 API 独立创建所需数据（先创建 PriceConfig，再创建 PriceBand）
+      - 使用 UUID 生成唯一代码避免唯一约束冲突
+      - 使用 `create_access_token()` 生成测试 token
+    - **测试模式**:
+      ```python
+      @pytest.mark.asyncio
+      async def test_xxx(app):
+          token = create_access_token(TEST_USER_ID, "admin", ["permission"])
+          # 通过 API 创建依赖数据
+          config_response, _ = await app.test_client.post("/api/v1/price-configs", ...)
+          # 执行测试操作
+          request, response = await app.test_client.post("/api/v1/price-bands", ...)
+      ```
+    - **替代方案**:
+      - 使用集成测试直接测试 Service 层（不通过 HTTP）
+      - 使用纯异步测试框架（如 aiohttp）替代 Sanic 测试客户端
 
 ### Security
 - Never commit secrets, API keys, or credentials
