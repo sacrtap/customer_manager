@@ -36,7 +36,7 @@
             <span>+2.5%</span>
           </div>
         </div>
-        <div class="stat-value">1,320</div>
+        <div class="stat-value">{{ stats.total_customers.toLocaleString() }}</div>
         <div class="stat-label">客户总数</div>
       </div>
 
@@ -50,7 +50,7 @@
             <span>+5.2%</span>
           </div>
         </div>
-        <div class="stat-value">1,089</div>
+        <div class="stat-value">{{ stats.healthy_customers.toLocaleString() }}</div>
         <div class="stat-label">活跃客户</div>
       </div>
 
@@ -64,7 +64,7 @@
             <span>-1.2%</span>
           </div>
         </div>
-        <div class="stat-value">48</div>
+        <div class="stat-value">{{ stats.at_risk_customers.toLocaleString() }}</div>
         <div class="stat-label">风险客户</div>
       </div>
 
@@ -78,7 +78,7 @@
             <span>-3.8%</span>
           </div>
         </div>
-        <div class="stat-value">183</div>
+        <div class="stat-value">{{ stats.zombie_customers.toLocaleString() }}</div>
         <div class="stat-label">僵尸客户</div>
       </div>
     </div>
@@ -177,11 +177,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import * as echarts from 'echarts'
 import dayjs from 'dayjs'
+import { healthApi } from '@/api/health'
+import { billingApi } from '@/api/billing'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -197,8 +199,40 @@ const userInfo = computed(() => userStore.userInfo || { real_name: '用户' })
 
 // 当前日期
 const currentDate = computed(() => {
-  return dayjs().format('YYYY年M月D日')
+  return dayjs().format('YYYY 年 M 月 D 日')
 })
+
+// Dashboard 数据
+const dashboardData = ref<any>(null)
+const loading = ref(false)
+
+// 统计卡片数据
+const stats = ref({
+  total_customers: 0,
+  healthy_customers: 0,
+  at_risk_customers: 0,
+  zombie_customers: 0
+})
+
+// 加载 Dashboard 数据
+const loadDashboardData = async () => {
+  loading.value = true
+  try {
+    dashboardData.value = await healthApi.getDashboard()
+    stats.value = {
+      total_customers: dashboardData.value.total_customers,
+      healthy_customers: dashboardData.value.healthy_customers,
+      at_risk_customers: dashboardData.value.at_risk_customers,
+      zombie_customers: dashboardData.value.zombie_customers
+    }
+    initTrendChart()
+    initTierChart()
+  } catch (error) {
+    console.error('加载仪表盘数据失败:', error)
+  } finally {
+    loading.value = false
+  }
+}
 
 // 风险客户数据
 const riskColumns = [
@@ -240,7 +274,7 @@ const goToBillingList = () => router.push('/billing/list')
 
 // 初始化趋势图
 const initTrendChart = () => {
-  if (!trendChart.value) return
+  if (!trendChart.value || !dashboardData.value) return
 
   trendChartInstance = echarts.init(trendChart.value)
   const option = {
@@ -249,7 +283,7 @@ const initTrendChart = () => {
       axisPointer: { type: 'cross' }
     },
     legend: {
-      data: ['活跃客户', '风险客户', '僵尸客户'],
+      data: ['健康度评分'],
       bottom: 0
     },
     grid: {
@@ -262,33 +296,23 @@ const initTrendChart = () => {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+      data: dashboardData.value.health_trend.map((item: { date: string; score: number }) => {
+        return dayjs(item.date).format('MM/DD')
+      })
     },
     yAxis: {
-      type: 'value'
+      type: 'value',
+      min: 0,
+      max: 100
     },
     series: [
       {
-        name: '活跃客户',
+        name: '健康度评分',
         type: 'line',
         smooth: true,
-        data: [980, 1020, 1050, 1080, 1060, 1089, 1100, 1120, 1150, 1180, 1200, 1220],
+        data: dashboardData.value.health_trend.map((item: { date: string; score: number }) => item.score),
         areaStyle: { opacity: 0.1 },
         itemStyle: { color: '#00b42a' }
-      },
-      {
-        name: '风险客户',
-        type: 'line',
-        smooth: true,
-        data: [45, 42, 40, 48, 52, 48, 46, 44, 42, 40, 38, 36],
-        itemStyle: { color: '#ff7d00' }
-      },
-      {
-        name: '僵尸客户',
-        type: 'line',
-        smooth: true,
-        data: [200, 195, 190, 185, 188, 183, 180, 178, 176, 174, 172, 170],
-        itemStyle: { color: '#f53f3f' }
       }
     ]
   }
@@ -297,7 +321,7 @@ const initTrendChart = () => {
 
 // 初始化价值分布图
 const initTierChart = () => {
-  if (!tierChart.value) return
+  if (!tierChart.value || !dashboardData.value) return
 
   tierChartInstance = echarts.init(tierChart.value)
   const option = {
@@ -309,7 +333,7 @@ const initTierChart = () => {
       orient: 'vertical',
       right: '5%',
       top: 'center',
-      data: ['S级', 'A级', 'B级', 'C级', 'D级']
+      data: ['A 级', 'B 级', 'C 级', 'D 级']
     },
     series: [
       {
@@ -333,13 +357,13 @@ const initTierChart = () => {
             fontWeight: 'bold'
           }
         },
-        data: [
-          { value: 12, name: 'S级', itemStyle: { color: '#ff7d00' } },
-          { value: 45, name: 'A级', itemStyle: { color: '#165dff' } },
-          { value: 128, name: 'B级', itemStyle: { color: '#00b42a' } },
-          { value: 435, name: 'C级', itemStyle: { color: '#86909c' } },
-          { value: 700, name: 'D级', itemStyle: { color: '#c9cdd4' } }
-        ]
+        data: dashboardData.value.value_distribution.map((item: any) => ({
+          value: item.count,
+          name: item.tier + '级',
+          itemStyle: {
+            color: item.tier === 'A' ? '#165dff' : item.tier === 'B' ? '#00b42a' : item.tier === 'C' ? '#86909c' : '#c9cdd4'
+          }
+        }))
       }
     ]
   }
@@ -353,8 +377,7 @@ const handleResize = () => {
 }
 
 onMounted(() => {
-  initTrendChart()
-  initTierChart()
+  loadDashboardData()
   window.addEventListener('resize', handleResize)
 })
 

@@ -57,18 +57,25 @@ class HealthService:
         }
 
     @staticmethod
-    async def _get_health_trend(session: AsyncSession) -> List[int]:
+    async def _get_health_trend(session: AsyncSession) -> List[Dict[str, Any]]:
         """获取 7 天健康趋势"""
-        # 简化：根据现有数据计算一个趋势
-        # 实际项目中应该有 health_score_history 表
         today = datetime.now()
         trend = []
 
         for i in range(6, -1, -1):
             date = today - timedelta(days=i)
-            # 模拟趋势数据
-            base_score = 75 + (6 - i) * 2
-            trend.append(base_score)
+            date_str = date.strftime("%Y-%m-%d")
+
+            result = await session.execute(
+                select(func.avg(Customer.health_score)).where(
+                    func.date(Customer.created_at) == date
+                )
+            )
+            avg_score = result.scalar()
+
+            trend.append(
+                {"date": date_str, "score": float(avg_score) if avg_score else 0}
+            )
 
         return trend
 

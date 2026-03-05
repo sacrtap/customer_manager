@@ -2,13 +2,11 @@ import api from './index'
 
 export interface HealthDashboard {
   total_customers: number
-  active_count: number
-  risk_count: number
-  zombie_count: number
-  health_score_avg: number
-  tier_distribution: Record<string, number>
+  healthy_customers: number
+  at_risk_customers: number
+  zombie_customers: number
   health_trend: Array<{ date: string; score: number }>
-  value_distribution: Array<{ tier_level: string; count: number }>
+  value_distribution: Array<{ tier: string; count: number; value: number }>
 }
 
 export interface RiskCustomer {

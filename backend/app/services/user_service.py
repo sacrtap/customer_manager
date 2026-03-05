@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.user import User
 from app.models.role import Role, UserRole
-from app.utils.password import get_password_hash
+from app.utils.password import hash_password
 
 
 class UserService:
@@ -78,7 +78,7 @@ class UserService:
         role_ids: Optional[List[int]] = None,
     ) -> User:
         """创建用户"""
-        password_hash = get_password_hash(data["password"])
+        password_hash = hash_password(data["password"])
 
         user = User(
             username=data["username"],
@@ -151,6 +151,6 @@ class UserService:
         if not user:
             return False
 
-        user.password_hash = get_password_hash(new_password)
+        user.password_hash = hash_password(new_password)
         await session.flush()
         return True

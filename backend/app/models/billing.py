@@ -1,7 +1,16 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import BigInteger, DateTime, Enum, ForeignKey, Numeric, String, func
+from sqlalchemy import (
+    BigInteger,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Numeric,
+    String,
+    text,
+    func,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..database import Base
@@ -29,13 +38,19 @@ class Billing(Base):
             name="billing_status_enum",
             create_constraint=True,
             metadata=Base.metadata,
+            native_enum=True,
         ),
         default="pending",
         nullable=False,
         index=True,
     )
     billing_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=func.now(), nullable=False
+    )
+    updated_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime, default=func.now(), onupdate=func.now()
+    )
 
     # 关联客户
     customer: Mapped["Customer"] = relationship(
@@ -54,4 +69,5 @@ class Billing(Base):
             if self.billing_date
             else None,
             "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
