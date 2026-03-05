@@ -17,6 +17,7 @@ from .blueprints import (
     health,
     billing,
     user,
+    transfer,
 )
 
 
@@ -48,6 +49,7 @@ def create_app():
     app.blueprint(price_band.price_band_bp)
     app.blueprint(health.health_bp)
     app.blueprint(billing.billing_bp)
+    app.blueprint(transfer.transfer_bp)
 
     @app.get("/health")
     async def health_check(request):

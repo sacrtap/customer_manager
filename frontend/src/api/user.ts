@@ -74,5 +74,16 @@ export const userApi = {
 
   async updatePassword(id: number, newPassword: string): Promise<void> {
     await api.post(`/users/${id}/password`, { new_password: newPassword })
+import type { UserInfo } from '@/types/user'
+
+export const userApi = {
+  async list(): Promise<UserInfo[]> {
+    const response = await api.get<UserInfo[]>('/users')
+    return response.data
+  },
+
+  async listSales(): Promise<UserInfo[]> {
+    const response = await api.get<UserInfo[]>('/users?role=sales')
+    return response.data
   }
 }

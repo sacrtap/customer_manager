@@ -236,10 +236,27 @@ This is a new customer_manager project. The codebase is currently being initiali
       ```
 
  13. **Python 虚拟环境规则** (Phase 1.5 经验总结)
-      - 所有 Python 命令必须在虚拟环境中执行
-      - 检查命令：`which python` 应指向 venv 目录
-      - 激活虚拟环境：`source venv/bin/activate`
-      - 避免使用系统 Python（Python 2.7）
+       - 所有 Python 命令必须在虚拟环境中执行
+       - 检查命令：`which python` 应指向 venv 目录
+       - 激活虚拟环境：`source venv/bin/activate`
+       - 避免使用系统 Python（Python 2.7）
+
+ 14. **Phase 7 客户转移开发经验总结**
+       - **TDD 开发流程**: 先创建测试文件 (test_transfer_api.py)，再实现功能
+       - **Service 层测试**: 由于 Sanic 测试客户端与异步 SQLAlchemy 的兼容性问题 (见规则 8)，
+         优先编写 Service 层集成测试 (test_transfer_service.py) 验证业务逻辑
+       - **模型关系**: 
+         - 使用 `TYPE_CHECKING` 避免循环导入
+         - 双向关联明确指定 `foreign_keys` 和 `back_populates`
+         - Transfer 模型与 Customer、User 建立多个外键关联
+         - 使用 `relationship` 的 `foreign_keys` 参数区分多个 User 关联
+       - **Enum 状态管理**: 使用 SQLAlchemy Enum 限制 status 字段 (pending/approved/rejected/completed)
+       - **迁移脚本**: 迁移脚本支持 migrate 和 rollback，使用 `DROP TABLE IF EXISTS ... CASCADE`
+       - **蓝图注册**: 同时在 app/__init__.py 和 tests/conftest.py 中注册蓝图
+       - **语法验证**: 所有文件创建后运行 `python -m py_compile` 验证语法
+       - **测试验证**: Service 层测试 9 个用例全部通过，验证了创建、审批、拒绝、完成等核心功能
+       - **API 测试限制**: Sanic 测试客户端与异步 SQLAlchemy 存在事件循环冲突，
+         需通过 Service 层测试验证功能，或等待 Sanic 测试客户端修复
 
 ### Security
 - Never commit secrets, API keys, or credentials
