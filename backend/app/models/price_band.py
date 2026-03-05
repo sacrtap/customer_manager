@@ -5,10 +5,12 @@ from decimal import Decimal
 from typing import Optional
 
 from sqlalchemy import BigInteger, ForeignKey, Numeric, String, Text, UniqueConstraint
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB as PGJSONB
+from sqlalchemy.types import JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
+from app.config import settings
 
 
 class PriceBand(Base):
@@ -78,7 +80,9 @@ class PriceBand(Base):
 
     # 元数据
     metadata_json: Mapped[Optional[dict]] = mapped_column(
-        JSONB, nullable=True, comment="元数据"
+        PGJSONB if settings.db_type == "postgresql" else JSON,
+        nullable=True,
+        comment="元数据",
     )
     # 审计字段
     created_at: Mapped[datetime] = mapped_column(nullable=False, comment="创建时间")

@@ -5,6 +5,8 @@ sanic-ext==23.6.0
 # Database
 sqlalchemy[asyncio]==2.0.25
 asyncpg==0.29.0
+aiomysql==0.2.0
+aiosqlite==0.19.0
 alembic==1.12.1
 
 # Validation
