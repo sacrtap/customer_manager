@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>客户运营中台 - 登录</title>
+  <link href="https://unpkg.com/@arco-design/web-vue@2.54.0/dist/css/arco.min.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #F2F3F5 0%, #E8E9EB 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+    .background-pattern {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      opacity: 0.3;
+    }
+    .grid-pattern { width: 100%; height: 100%; }
+    .login-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 48px 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(22, 93, 255, 0.12);
+      width: 440px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      position: relative;
+      z-index: 1;
+    }
+    .login-header { text-align: center; margin-bottom: 32px; }
+    .logo-wrapper { display: inline-block; margin-bottom: 16px; }
+    .logo-icon { width: 64px; height: 64px; }
+    .system-title { font-size: 24px; font-weight: 600; color: #1D2129; margin: 0 0 8px 0; }
+    .system-subtitle { font-size: 14px; color: #86909C; margin: 0; }
+    .login-form { margin-bottom: 24px; }
+    .form-item { margin-bottom: 20px; }
+    .form-label {
+      display: block;
+      font-weight: 500;
+      color: #1D2129;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      height: 40px;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: 1px solid #E5E6EB;
+      border-radius: 4px;
+      background: #fff;
+      transition: all 0.2s;
+    }
+    input[type="text"]:focus, input[type="password"]:focus {
+      border-color: #165DFF;
+      outline: none;
+    }
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+    .arco-btn-primary {
+      width: 100%;
+      height: 40px;
+      font-size: 16px;
+      margin-top: 24px;
+      background-color: #165DFF;
+      border: 1px solid #165DFF;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .arco-btn-primary:hover {
+      background-color: #3B82F6;
+      border-color: #3B82F6;
+    }
+    .login-footer { text-align: center; margin-top: 24px; }
+    .copyright { font-size: 12px; color: #86909C; }
+    a { color: #165DFF; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="background-pattern">
+      <svg class="grid-pattern" width="100%" height="100%">
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(22, 93, 255, 0.05)" stroke-width="1"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)" />
+      </svg>
+    </div>
+    <div class="login-card">
+      <div class="login-header">
+        <div class="logo-wrapper">
+          <svg class="logo-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="64" height="64" rx="12" fill="#165DFF"/>
+            <path d="M32 16L44 28L32 40L20 28L32 16Z" fill="white" opacity="0.9"/>
+            <path d="M20 36L32 48L44 36" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h1 class="system-title">客户运营中台</h1>
+        <p class="system-subtitle">Customer Management System</p>
+      </div>
+      <form class="login-form">
+        <div class="form-item">
+          <label class="form-label">用户名</label>
+          <input type="text" placeholder="请输入用户名" />
+        </div>
+        <div class="form-item">
+          <label class="form-label">密码</label>
+          <input type="password" placeholder="请输入密码" />
+        </div>
+        <div class="form-options">
+          <label><input type="checkbox" /> 记住我</label>
+          <a href="#">忘记密码？</a>
+        </div>
+        <button type="button" class="arco-btn-primary">登录</button>
+      </form>
+      <div class="login-footer">
+        <p class="copyright">© 2026 客户运营中台。All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
