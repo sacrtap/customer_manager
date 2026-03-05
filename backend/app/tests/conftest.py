@@ -22,7 +22,9 @@ from app.config import settings
 from app.database import Base, get_db_session, set_test_session
 from app.blueprints import (
     auth,
+    billing,
     customer,
+    health,
     price_band,
     price_config,
     pricing_strategy,
@@ -34,13 +36,20 @@ from app.blueprints import (
 @pytest_asyncio.fixture(scope="function")
 async def test_engine():
     """为每个测试创建独立的异步引擎"""
-    engine = create_async_engine(
-        settings.asyncpg_url,
-        echo=False,
-        pool_pre_ping=True,
-        pool_size=1,
-        max_overflow=0,
-    )
+    # SQLite 不支持池配置
+    if settings.asyncpg_url.startswith("sqlite"):
+        engine = create_async_engine(
+            settings.asyncpg_url,
+            echo=False,
+        )
+    else:
+        engine = create_async_engine(
+            settings.asyncpg_url,
+            echo=False,
+            pool_pre_ping=True,
+            pool_size=1,
+            max_overflow=0,
+        )
 
     # 创建所有表
     async with engine.begin() as conn:
@@ -92,7 +101,9 @@ def test_app(test_session) -> Generator[Sanic, None, None]:
     # 注册蓝图
     from app.blueprints import (
         auth,
+        billing,
         customer,
+        health,
         price_band,
         price_config,
         pricing_strategy,
@@ -107,6 +118,8 @@ def test_app(test_session) -> Generator[Sanic, None, None]:
     app.blueprint(pricing_strategy.pricing_strategy_bp)
     app.blueprint(price_config.price_config_bp)
     app.blueprint(price_band.price_band_bp)
+    app.blueprint(health.health_bp)
+    app.blueprint(billing.billing_bp)
 
     @app.get("/health")
     async def health_check(request):

@@ -1,7 +1,8 @@
 from datetime import datetime
+from typing import Optional, List
 
-from sqlalchemy import BigInteger, DateTime, Index, Numeric, String, Text, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import BigInteger, DateTime, Index, Integer, Numeric, String, Text, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..database import Base
 
@@ -28,12 +29,17 @@ class Customer(Base):
     contact_email: Mapped[str] = mapped_column(String(255), nullable=True)
     address: Mapped[str] = mapped_column(Text, nullable=True)
     remark: Mapped[dict[str, str]] = mapped_column(Text, nullable=True)
+    last_active_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    health_score: Mapped[int] = mapped_column(Integer, default=50, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, default=func.now(), onupdate=func.now()
     )
 
     __table_args__ = (Index("idx_sales_tier", "sales_rep_id", "tier_level"),)
+
+    # 关联结算记录
+    billings: Mapped[List["Billing"]] = relationship(back_populates="customer")
 
     def to_dict(self):
         """转换为字典"""
@@ -53,6 +59,10 @@ class Customer(Base):
             "contact_email": self.contact_email,
             "address": self.address,
             "remark": self.remark,
+            "last_active_at": self.last_active_at.isoformat()
+            if self.last_active_at
+            else None,
+            "health_score": self.health_score if self.health_score else 0,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
