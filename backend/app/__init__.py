@@ -16,6 +16,7 @@ from .blueprints import (
     price_band,
     health,
     billing,
+    user,
 )
 
 
@@ -41,6 +42,7 @@ def create_app():
     app.blueprint(customer.customer_bp)
     app.blueprint(role.role_bp)
     app.blueprint(system.system_bp)
+    app.blueprint(user.user_bp)
     app.blueprint(pricing_strategy.pricing_strategy_bp)
     app.blueprint(price_config.price_config_bp)
     app.blueprint(price_band.price_band_bp)
