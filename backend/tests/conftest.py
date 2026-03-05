@@ -15,24 +15,29 @@ from app.models.user import User
 from app.models.role import Role
 
 
-# 测试数据库引擎
-test_engine = create_async_engine(
-    settings.asyncpg_url,
-    echo=False,
-    pool_pre_ping=True,
-    pool_size=1,
-    max_overflow=0,
-)
-
-# 异步会话工厂
-async_session_maker = async_sessionmaker(
-    test_engine, expire_on_commit=False, class_=AsyncSession
-)
-
-
 @pytest_asyncio.fixture(scope="function")
 async def session():
-    """创建独立的测试会话"""
+    """创建独立的测试会话 - 每个测试使用独立引擎"""
+    # 每个测试创建新引擎，避免事件循环冲突
+    if settings.asyncpg_url.startswith("sqlite"):
+        test_engine = create_async_engine(
+            settings.asyncpg_url,
+            echo=False,
+        )
+    else:
+        test_engine = create_async_engine(
+            settings.asyncpg_url,
+            echo=False,
+            pool_pre_ping=True,
+            pool_size=1,
+            max_overflow=0,
+        )
+
+    # 异步会话工厂
+    async_session_maker = async_sessionmaker(
+        test_engine, expire_on_commit=False, class_=AsyncSession
+    )
+
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
@@ -46,11 +51,9 @@ async def session():
 async def test_user(session: AsyncSession):
     """创建测试用户"""
     import uuid
-    from app.services.role_service import RoleService
 
     # 创建测试角色
     role = Role(
-        id=str(uuid.uuid4()),
         name=f"TestRole_{uuid.uuid4()}",
         description="测试角色",
     )
@@ -59,11 +62,9 @@ async def test_user(session: AsyncSession):
 
     # 创建测试用户
     user = User(
-        id=str(uuid.uuid4()),
         username=f"testuser_{uuid.uuid4()}",
-        password="hashed_password",
-        role_id=role.id,
-        customer_code="TEST001",
+        password_hash="hashed_password",
+        real_name="测试用户",
     )
     session.add(user)
     await session.flush()

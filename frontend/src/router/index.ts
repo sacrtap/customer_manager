@@ -133,6 +133,28 @@ const routes: AppRouteRecordRaw[] = [
           icon: 'icon-coins',
           permissions: ['pricing.view']
         }
+      },
+      {
+        path: 'transfers/create',
+        name: 'TransferCreate',
+        component: () => import('@/views/transfer/TransferCreate.vue'),
+        meta: {
+          title: '发起客户转移',
+          requiresAuth: true,
+          icon: 'icon-swap',
+          permissions: ['customer.transfer']
+        }
+      },
+      {
+        path: 'transfers/history',
+        name: 'TransferHistory',
+        component: () => import('@/views/transfer/TransferHistory.vue'),
+        meta: {
+          title: '转移历史记录',
+          requiresAuth: true,
+          icon: 'icon-history',
+          permissions: ['customer.transfer.view']
+        }
       }
     ]
   }

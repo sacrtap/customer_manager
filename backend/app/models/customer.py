@@ -1,10 +1,14 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, TYPE_CHECKING
 
 from sqlalchemy import BigInteger, DateTime, Index, Integer, Numeric, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..database import Base
+
+if TYPE_CHECKING:
+    from .billing import Billing
+    from .transfer import CustomerTransfer
 
 
 class Customer(Base):
@@ -40,6 +44,11 @@ class Customer(Base):
 
     # 关联结算记录
     billings: Mapped[List["Billing"]] = relationship(back_populates="customer")
+
+    # 关联转移记录
+    transfers: Mapped[List["CustomerTransfer"]] = relationship(
+        back_populates="customer", foreign_keys="CustomerTransfer.customer_id"
+    )
 
     def to_dict(self):
         """转换为字典"""

@@ -30,6 +30,7 @@ from app.blueprints import (
     pricing_strategy,
     role,
     system,
+    transfer,
 )
 
 
@@ -109,6 +110,7 @@ def test_app(test_session) -> Generator[Sanic, None, None]:
         pricing_strategy,
         role,
         system,
+        transfer,
     )
 
     app.blueprint(auth.auth_bp)
@@ -120,6 +122,7 @@ def test_app(test_session) -> Generator[Sanic, None, None]:
     app.blueprint(price_band.price_band_bp)
     app.blueprint(health.health_bp)
     app.blueprint(billing.billing_bp)
+    app.blueprint(transfer.transfer_bp)
 
     @app.get("/health")
     async def health_check(request):
