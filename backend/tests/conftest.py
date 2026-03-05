@@ -7,6 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.orm import sessionmaker
 import pytest_asyncio
 
+# 导入 app 以触发所有模型加载到 Base.metadata
+from app import app as _app_module
 from app.config import settings
 from app.database import Base, set_test_session
 from app.models.customer import Customer
@@ -33,18 +35,24 @@ async def session():
             max_overflow=0,
         )
 
+    # 创建表 (自动提交)
+    async with test_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+        # 显式提交，确保表被创建
+        await conn.commit()
+
     # 异步会话工厂
     async_session_maker = async_sessionmaker(
         test_engine, expire_on_commit=False, class_=AsyncSession
     )
 
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
     async with async_session_maker() as test_session:
         set_test_session(test_session)
         yield test_session
         set_test_session(None)
+
+    # 清理引擎
+    await test_engine.dispose()
 
 
 @pytest_asyncio.fixture(scope="function")
