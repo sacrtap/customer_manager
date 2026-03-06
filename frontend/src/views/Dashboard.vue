@@ -36,7 +36,9 @@
             <span>+2.5%</span>
           </div>
         </div>
-        <div class="stat-value">{{ stats.total_customers.toLocaleString() }}</div>
+        <div class="stat-value">
+          {{ stats.total_customers.toLocaleString() }}
+        </div>
         <div class="stat-label">客户总数</div>
       </div>
 
@@ -50,7 +52,9 @@
             <span>+5.2%</span>
           </div>
         </div>
-        <div class="stat-value">{{ stats.healthy_customers.toLocaleString() }}</div>
+        <div class="stat-value">
+          {{ stats.healthy_customers.toLocaleString() }}
+        </div>
         <div class="stat-label">活跃客户</div>
       </div>
 
@@ -64,7 +68,9 @@
             <span>-1.2%</span>
           </div>
         </div>
-        <div class="stat-value">{{ stats.at_risk_customers.toLocaleString() }}</div>
+        <div class="stat-value">
+          {{ stats.at_risk_customers.toLocaleString() }}
+        </div>
         <div class="stat-label">风险客户</div>
       </div>
 
@@ -78,7 +84,9 @@
             <span>-3.8%</span>
           </div>
         </div>
-        <div class="stat-value">{{ stats.zombie_customers.toLocaleString() }}</div>
+        <div class="stat-value">
+          {{ stats.zombie_customers.toLocaleString() }}
+        </div>
         <div class="stat-label">僵尸客户</div>
       </div>
     </div>
@@ -129,11 +137,11 @@
               <icon-minus-circle v-else-if="record.riskLevel === 'medium'" />
               <icon-info-circle v-else />
               {{
-                record.riskLevel === 'high'
-                  ? '高风险'
-                  : record.riskLevel === 'medium'
-                    ? '中风险'
-                    : '低风险'
+                record.riskLevel === "high"
+                  ? "高风险"
+                  : record.riskLevel === "medium"
+                    ? "中风险"
+                    : "低风险"
               }}
             </span>
           </template>
@@ -177,229 +185,254 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
-import * as echarts from 'echarts'
-import dayjs from 'dayjs'
-import { healthApi } from '@/api/health'
-import { billingApi } from '@/api/billing'
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/user";
+import * as echarts from "echarts";
+import dayjs from "dayjs";
+import { healthApi } from "@/api/health";
+import { billingApi } from "@/api/billing";
 
-const router = useRouter()
-const userStore = useUserStore()
+const router = useRouter();
+const userStore = useUserStore();
 
-const trendPeriod = ref('month')
-const trendChart = ref<HTMLElement | null>(null)
-const tierChart = ref<HTMLElement | null>(null)
-let trendChartInstance: echarts.ECharts | null = null
-let tierChartInstance: echarts.ECharts | null = null
+const trendPeriod = ref("month");
+const trendChart = ref<HTMLElement | null>(null);
+const tierChart = ref<HTMLElement | null>(null);
+let trendChartInstance: echarts.ECharts | null = null;
+let tierChartInstance: echarts.ECharts | null = null;
 
 // 用户信息
-const userInfo = computed(() => userStore.userInfo || { real_name: '用户' })
+const userInfo = computed(() => userStore.userInfo || { real_name: "用户" });
 
 // 当前日期
 const currentDate = computed(() => {
-  return dayjs().format('YYYY 年 M 月 D 日')
-})
+  return dayjs().format("YYYY 年 M 月 D 日");
+});
 
 // Dashboard 数据
-const dashboardData = ref<any>(null)
-const loading = ref(false)
+const dashboardData = ref<any>(null);
+const loading = ref(false);
 
 // 统计卡片数据
 const stats = ref({
   total_customers: 0,
   healthy_customers: 0,
   at_risk_customers: 0,
-  zombie_customers: 0
-})
+  zombie_customers: 0,
+});
 
 // 加载 Dashboard 数据
 const loadDashboardData = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    dashboardData.value = await healthApi.getDashboard()
+    dashboardData.value = await healthApi.getDashboard();
     stats.value = {
       total_customers: dashboardData.value.total_customers,
       healthy_customers: dashboardData.value.healthy_customers,
       at_risk_customers: dashboardData.value.at_risk_customers,
-      zombie_customers: dashboardData.value.zombie_customers
-    }
-    initTrendChart()
-    initTierChart()
+      zombie_customers: dashboardData.value.zombie_customers,
+    };
+    initTrendChart();
+    initTierChart();
   } catch (error) {
-    console.error('加载仪表盘数据失败:', error)
+    console.error("加载仪表盘数据失败:", error);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // 风险客户数据
 const riskColumns = [
-  { title: '客户名称', dataIndex: 'name', width: 150 },
-  { title: '等级', dataIndex: 'tier', slotName: 'tier', width: 60, align: 'center' },
-  { title: '未使用天数', dataIndex: 'days', width: 100, align: 'center' },
-  { title: '风险等级', dataIndex: 'riskLevel', slotName: 'riskLevel', width: 100 },
-  { title: '操作', slotName: 'action', width: 60, align: 'center' }
-]
+  { title: "客户名称", dataIndex: "name", width: 150 },
+  {
+    title: "等级",
+    dataIndex: "tier",
+    slotName: "tier",
+    width: 60,
+    align: "center",
+  },
+  { title: "未使用天数", dataIndex: "days", width: 100, align: "center" },
+  {
+    title: "风险等级",
+    dataIndex: "riskLevel",
+    slotName: "riskLevel",
+    width: 100,
+  },
+  { title: "操作", slotName: "action", width: 60, align: "center" },
+];
 
 const riskData = [
-  { name: 'XX 科技有限公司', tier: 'S', days: 14, riskLevel: 'high' },
-  { name: 'YY 贸易集团', tier: 'A', days: 10, riskLevel: 'high' },
-  { name: 'ZZ 建设公司', tier: 'B', days: 8, riskLevel: 'medium' },
-  { name: 'AA 装饰公司', tier: 'A', days: 7, riskLevel: 'medium' },
-  { name: 'BB 房产中介', tier: 'C', days: 12, riskLevel: 'low' }
-]
+  { name: "XX 科技有限公司", tier: "S", days: 14, riskLevel: "high" },
+  { name: "YY 贸易集团", tier: "A", days: 10, riskLevel: "high" },
+  { name: "ZZ 建设公司", tier: "B", days: 8, riskLevel: "medium" },
+  { name: "AA 装饰公司", tier: "A", days: 7, riskLevel: "medium" },
+  { name: "BB 房产中介", tier: "C", days: 12, riskLevel: "low" },
+];
 
 // 结算记录数据
 const billingColumns = [
-  { title: '月份', dataIndex: 'month', width: 80 },
-  { title: '客户数', dataIndex: 'count', width: 80, align: 'center' },
-  { title: '金额', dataIndex: 'amount', width: 120 },
-  { title: '状态', dataIndex: 'status', slotName: 'status', width: 80 },
-  { title: '操作', slotName: 'action', width: 60, align: 'center' }
-]
+  { title: "月份", dataIndex: "month", width: 80 },
+  { title: "客户数", dataIndex: "count", width: 80, align: "center" },
+  { title: "金额", dataIndex: "amount", width: 120 },
+  { title: "状态", dataIndex: "status", slotName: "status", width: 80 },
+  { title: "操作", slotName: "action", width: 60, align: "center" },
+];
 
 const billingData = [
-  { month: '2026-02', count: 1280, amount: '¥2,456,800', status: '已发送' },
-  { month: '2026-01', count: 1275, amount: '¥2,234,600', status: '已发送' },
-  { month: '2025-12', count: 1268, amount: '¥2,567,900', status: '已发送' },
-  { month: '2025-11', count: 1255, amount: '¥2,123,400', status: '异常' },
-  { month: '2025-10', count: 1250, amount: '¥2,345,200', status: '已发送' }
-]
+  { month: "2026-02", count: 1280, amount: "¥2,456,800", status: "已发送" },
+  { month: "2026-01", count: 1275, amount: "¥2,234,600", status: "已发送" },
+  { month: "2025-12", count: 1268, amount: "¥2,567,900", status: "已发送" },
+  { month: "2025-11", count: 1255, amount: "¥2,123,400", status: "异常" },
+  { month: "2025-10", count: 1250, amount: "¥2,345,200", status: "已发送" },
+];
 
 // 导航方法
-const goToRiskList = () => router.push('/health/risks')
-const goToBillingList = () => router.push('/billing/list')
+const goToRiskList = () => router.push("/health/risks");
+const goToBillingList = () => router.push("/billing/list");
 
 // 初始化趋势图
 const initTrendChart = () => {
-  if (!trendChart.value || !dashboardData.value) return
+  if (!trendChart.value || !dashboardData.value) return;
 
-  trendChartInstance = echarts.init(trendChart.value)
+  trendChartInstance = echarts.init(trendChart.value);
   const option = {
     tooltip: {
-      trigger: 'axis',
-      axisPointer: { type: 'cross' }
+      trigger: "axis",
+      axisPointer: { type: "cross" },
     },
     legend: {
-      data: ['健康度评分'],
-      bottom: 0
+      data: ["健康度评分"],
+      bottom: 0,
     },
     grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '15%',
-      top: '10%',
-      containLabel: true
+      left: "3%",
+      right: "4%",
+      bottom: "15%",
+      top: "10%",
+      containLabel: true,
     },
     xAxis: {
-      type: 'category',
+      type: "category",
       boundaryGap: false,
-      data: dashboardData.value.health_trend.map((item: { date: string; score: number }) => {
-        return dayjs(item.date).format('MM/DD')
-      })
+      data: dashboardData.value.health_trend.map(
+        (item: { date: string; score: number }) => {
+          return dayjs(item.date).format("MM/DD");
+        },
+      ),
     },
     yAxis: {
-      type: 'value',
+      type: "value",
       min: 0,
-      max: 100
+      max: 100,
     },
     series: [
       {
-        name: '健康度评分',
-        type: 'line',
+        name: "健康度评分",
+        type: "line",
         smooth: true,
-        data: dashboardData.value.health_trend.map((item: { date: string; score: number }) => item.score),
+        data: dashboardData.value.health_trend.map(
+          (item: { date: string; score: number }) => item.score,
+        ),
         areaStyle: { opacity: 0.1 },
-        itemStyle: { color: '#00b42a' }
-      }
-    ]
-  }
-  trendChartInstance.setOption(option)
-}
+        itemStyle: { color: "#00b42a" },
+      },
+    ],
+  };
+  trendChartInstance.setOption(option);
+};
 
 // 初始化价值分布图
 const initTierChart = () => {
-  if (!tierChart.value || !dashboardData.value) return
+  if (!tierChart.value || !dashboardData.value) return;
 
-  tierChartInstance = echarts.init(tierChart.value)
+  tierChartInstance = echarts.init(tierChart.value);
   const option = {
     tooltip: {
-      trigger: 'item',
-      formatter: '{b}: {c} ({d}%)'
+      trigger: "item",
+      formatter: "{b}: {c} ({d}%)",
     },
     legend: {
-      orient: 'vertical',
-      right: '5%',
-      top: 'center',
-      data: ['A 级', 'B 级', 'C 级', 'D 级']
+      orient: "vertical",
+      right: "5%",
+      top: "center",
+      data: ["A 级", "B 级", "C 级", "D 级"],
     },
     series: [
       {
-        name: '客户价值分布',
-        type: 'pie',
-        radius: ['45%', '75%'],
-        center: ['35%', '50%'],
+        name: "客户价值分布",
+        type: "pie",
+        radius: ["45%", "75%"],
+        center: ["35%", "50%"],
         avoidLabelOverlap: false,
         itemStyle: {
           borderRadius: 8,
-          borderColor: '#fff',
-          borderWidth: 2
+          borderColor: "#fff",
+          borderWidth: 2,
         },
         label: {
-          show: false
+          show: false,
         },
         emphasis: {
           label: {
             show: true,
             fontSize: 16,
-            fontWeight: 'bold'
-          }
+            fontWeight: "bold",
+          },
         },
         data: dashboardData.value.value_distribution.map((item: any) => ({
           value: item.count,
-          name: item.tier + '级',
+          name: item.tier + "级",
           itemStyle: {
-            color: item.tier === 'A' ? '#165dff' : item.tier === 'B' ? '#00b42a' : item.tier === 'C' ? '#86909c' : '#c9cdd4'
-          }
-        }))
-      }
-    ]
-  }
-  tierChartInstance.setOption(option)
-}
+            color:
+              item.tier === "A"
+                ? "#165dff"
+                : item.tier === "B"
+                  ? "#00b42a"
+                  : item.tier === "C"
+                    ? "#86909c"
+                    : "#c9cdd4",
+          },
+        })),
+      },
+    ],
+  };
+  tierChartInstance.setOption(option);
+};
 
 // 窗口大小调整
 const handleResize = () => {
-  trendChartInstance?.resize()
-  tierChartInstance?.resize()
-}
+  trendChartInstance?.resize();
+  tierChartInstance?.resize();
+};
 
 onMounted(() => {
-  loadDashboardData()
-  window.addEventListener('resize', handleResize)
-})
+  loadDashboardData();
+  window.addEventListener("resize", handleResize);
+});
 
 onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-  trendChartInstance?.dispose()
-  tierChartInstance?.dispose()
-})
+  window.removeEventListener("resize", handleResize);
+  trendChartInstance?.dispose();
+  tierChartInstance?.dispose();
+});
 </script>
 
 <style scoped lang="scss">
+@import "@/styles/variables.scss";
+
 .dashboard {
-  padding: 24px;
+  padding: $spacing-md;
 }
 
 /* 欢迎横幅 */
 .welcome-banner {
-  background: linear-gradient(135deg, #165DFF 0%, #0E42D2 100%);
-  border-radius: 12px;
-  padding: 32px;
+  @include chart-card;
+  background: $primary-gradient;
+  border-radius: $border-radius-md;
+  padding: $spacing-lg;
   color: white;
-  margin-bottom: 24px;
+  margin-bottom: $spacing-md;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -408,13 +441,17 @@ onUnmounted(() => {
 }
 
 .welcome-banner::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   right: -20%;
   width: 60%;
   height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 70%
+  );
   transform: rotate(-15deg);
 }
 
@@ -460,51 +497,48 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-  margin-bottom: 24px;
+  margin-bottom: $spacing-md;
 }
 
 .stat-card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 24px;
-  border: 1px solid #E5E6EB;
+  @include stat-card;
 }
 
 .stat-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 16px;
+  margin-bottom: $spacing-sm;
 }
 
 .stat-icon {
   width: 48px;
   height: 48px;
-  border-radius: 12px;
+  border-radius: $border-radius-md;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: $font-size-lg;
 }
 
 .stat-icon.blue {
-  background: linear-gradient(135deg, rgba(22,93,255,0.1) 0%, rgba(22,93,255,0.05) 100%);
-  color: #165DFF;
+  background: $blue-gradient;
+  color: $primary-color;
 }
 
 .stat-icon.green {
-  background: linear-gradient(135deg, rgba(0,180,42,0.1) 0%, rgba(0,180,42,0.05) 100%);
-  color: #00B42A;
+  background: $success-gradient;
+  color: $success-color;
 }
 
 .stat-icon.orange {
-  background: linear-gradient(135deg, rgba(255,125,0,0.1) 0%, rgba(255,125,0,0.05) 100%);
-  color: #FF7D00;
+  background: $warning-gradient;
+  color: $warning-color;
 }
 
 .stat-icon.red {
-  background: linear-gradient(135deg, rgba(245,63,63,0.1) 0%, rgba(245,63,63,0.05) 100%);
-  color: #F53F3F;
+  background: $danger-gradient;
+  color: $danger-color;
 }
 
 .stat-trend {
@@ -540,14 +574,11 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 20px;
-  margin-bottom: 24px;
+  margin-bottom: $spacing-md;
 }
 
 .chart-card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 24px;
-  border: 1px solid #E5E6EB;
+  @include chart-card;
 }
 
 .chart-header {
@@ -584,10 +615,7 @@ onUnmounted(() => {
 }
 
 .table-card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 24px;
-  border: 1px solid #E5E6EB;
+  @include chart-card;
 }
 
 .table-header {

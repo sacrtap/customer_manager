@@ -61,12 +61,13 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Message } from '@arco-design/web-vue'
+import type { RiskCustomer } from '@/api/health'
 import { healthApi } from '@/api/health'
 
 const router = useRouter()
 
 const loading = ref(false)
-const data = ref<any[]>([])
+const data = ref<RiskCustomer[]>([])
 const total = ref(0)
 
 const keyword = ref('')
