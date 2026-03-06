@@ -211,6 +211,19 @@
             </a-menu-item>
           </a-sub-menu>
         </a-menu>
+
+        <!-- 侧边栏底部用户信息 -->
+        <div class="sidebar-footer">
+          <div class="user-info-sidebar">
+            <div class="user-avatar-sidebar">
+              {{ userInfo.real_name?.charAt(0) }}
+            </div>
+            <div class="user-details-sidebar">
+              <div class="user-name-sidebar">{{ userInfo.real_name }}</div>
+              <div class="user-role-sidebar">{{ userInfo.role }}</div>
+            </div>
+          </div>
+        </div>
       </a-layout-sider>
 
       <a-layout>
@@ -548,13 +561,70 @@ const showNotifications = () => {
       }
 
       :deep(.arco-menu-item.arco-menu-selected) {
-        background: linear-gradient(135deg, #165dff 0%, #2b6de5 100%);
+        background: linear-gradient(135deg, #165DFF 0%, #0E42D2 100%);
         color: #ffffff;
       }
 
       :deep(.arco-menu-inline-header .arco-icon),
       :deep(.arco-menu-item .arco-icon) {
         font-size: 18px;
+      }
+    }
+
+    .sidebar-footer {
+      padding: 16px 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+
+      .user-info-sidebar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 8px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.08);
+        }
+
+        .user-avatar-sidebar {
+          width: 40px;
+          height: 40px;
+          background: linear-gradient(135deg, #165DFF 0%, #722ED1 100%);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 16px;
+          font-weight: 600;
+          flex-shrink: 0;
+        }
+
+        .user-details-sidebar {
+          flex: 1;
+          overflow: hidden;
+
+          .user-name-sidebar {
+            font-size: 14px;
+            color: #ffffff;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .user-role-sidebar {
+            font-size: 12px;
+            color: #86909C;
+            margin-top: 2px;
+          }
+        }
       }
     }
   }
