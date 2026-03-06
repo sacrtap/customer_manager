@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from typing import Optional, List
 from datetime import datetime
 
@@ -49,5 +49,4 @@ class CustomerResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

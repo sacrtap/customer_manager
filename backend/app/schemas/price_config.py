@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class PriceConfigBase(BaseModel):
@@ -45,8 +45,7 @@ class PriceConfigResponse(BaseModel):
     updated_at: Optional[datetime] = None
     updated_by: Optional[int] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PriceConfigQuery(BaseModel):
