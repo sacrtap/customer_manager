@@ -1,271 +1,133 @@
 # AGENTS.md
 
-This file contains guidelines for agentic coding assistants working in this repository.
-
 ## 交互要求
-- Thinking 思考过程用中文表述.
-- Reply 回答也要用中文回复.
-- 所有生成的文档都要使用中文，且符合中文的语法规范.
-- Use context7 for all code generation and API documentation questions.
-- 针对所有错误后修复成功的经验进行总结，把必要的经验写更新至AGENTS.md中，以避免再犯错.
+- Thinking/Reply 均使用中文
+- Use context7 for code generation/API docs
+- 错误修复后总结更新至本文件
+- 项目有关键技术变更时，需及时更新 AGENTS.md
 
 ## Project Status
+Customer Manager - 客户管理系统 (Vue 3 + TypeScript + Sanic + SQLAlchemy Async + PostgreSQL)
 
-This is a new customer_manager project. The codebase is currently being initialized.
+## 文档编辑
+- 所有文档均采用 Markdown 格式
+- 代码示例采用反引号 (```) 包裹
+- 文档编写以中文为主，关键术语可保留
 
-## Build, Lint, and Test Commands
+## Build, Lint, Test Commands
 
-### Build
+### Backend (Python 3.11+)
 ```bash
-# Detect build system and provide appropriate command
-# Examples (to be determined based on tech stack):
-# npm run build
-# python -m build
-# cargo build
-# make build
+cd backend
+source venv/bin/activate
+pip install -r requirements.txt
+
+# 测试
+pytest                              # 全部测试
+pytest tests/test_health_api.py     # 单个文件
+pytest tests/test_health_api.py::test_health_check -v  # 单个函数
+pytest -k "transfer" -v             # 关键字匹配
+
+# Lint & Format
+black . --check && isort . --check-only
+black . && isort .                  # 格式化
 ```
 
-### Linting
+### Frontend (Node.js 18+)
 ```bash
-# Run linter (to be determined based on tech stack):
-# npm run lint
-# ruff check
-# cargo clippy
-# make lint
+cd frontend
+npm install
+npm run dev                         # 开发模式
+npm run build                       # 构建
+npm run lint                        # Linting
 ```
 
-### Formatting
+### E2E Tests (Playwright)
 ```bash
-# Format code (to be determined based on tech stack):
-# npm run format
-# black .
-# cargo fmt
-# make format
-```
-
-### Testing
-```bash
-# Run all tests (to be determined based on tech stack):
-# npm test
-# pytest
-# cargo test
-# make test
-```
-
-### Run Single Test
-```bash
-# Run specific test file (examples based on tech stack):
-# npm test -- path/to/test.test.js
-# pytest path/to/test.py
-# cargo test test_name
+cd frontend
+npx playwright test                 # 全部测试
+npx playwright test tests/e2e/example.spec.ts  # 单个文件
+npx playwright test --headed        # 有头调试
 ```
 
 ## Code Style Guidelines
 
-### General Principles
-- Write clear, self-documenting code
-- Keep functions small and focused on a single responsibility
-- Follow existing patterns in the codebase
-- Add comments only when necessary to explain complex logic
+### Naming
+- **JS/TS**: `camelCase` (变量/函数), `PascalCase` (类/类型), `UPPER_SNAKE_CASE` (常量)
+- **Python**: `snake_case` (变量/函数), `PascalCase` (类), `UPPER_SNAKE_CASE` (常量)
+- **Files**: `kebab-case` 或 `snake_case`
 
-### Import Ordering
-- Group imports: standard library → third-party → local modules
-- Sort alphabetically within each group
-- Separate groups with blank lines
+### Imports
+- 顺序：标准库 → 第三方 → 本地模块
+- 组内按字母排序，组间空行分隔
 
-### Formatting
-- Use standard formatting for the chosen language
-- Maximum line length: 100 characters (or language standard)
-- Use meaningful indentation
-
-### Type System
-- Use type hints/annotations for all function parameters and return values
-- Avoid `any` types; use specific types or interfaces
-- Prefer strict type checking
-
-### Naming Conventions
-- **Variables/Functions**: `camelCase` (JavaScript/TypeScript) or `snake_case` (Python/Rust)
-- **Classes/Types**: `PascalCase`
-- **Constants**: `UPPER_SNAKE_CASE`
-- **File names**: `kebab-case` or `snake_case` depending on language conventions
-- Use descriptive, meaningful names that explain purpose
+### Types
+- 禁止 `any`，使用具体类型
+- 函数参数和返回值必须有类型注解
+- TypeScript 启用 strict 模式
 
 ### Error Handling
-- Never silently swallow errors
-- Use appropriate error types for the language
-- Provide context in error messages (what happened and why)
-- Handle errors at appropriate abstraction levels
-- Log errors with sufficient context for debugging
+- 禁止静默吞掉错误
+- 错误信息包含上下文（发生了什么 + 原因）
+- 使用语言特定的错误类型
 
-### Function Design
-- Default to pure functions when possible
-- Limit function parameters to 3-5 (use objects for many parameters)
-- Return early for guard clauses
-- Use explicit returns rather than implicit ones
+## Testing Rules (重要)
 
-### Comments
-- Write code that is self-explanatory
-- Only comment "why", not "what"
-- Keep comments up-to-date with code changes
-- Use TODO/FIXME comments sparingly with context
+1. **Git Worktree**: 文件操作必须使用 `workdir` 参数指定正确目录
 
-### Testing Guidelines
-- Write tests for all public APIs
-- Aim for high test coverage on critical paths
-- Use descriptive test names that explain what is being tested
-- Arrange tests in Given-When-Then structure when appropriate
-- Mock external dependencies
-- Test edge cases and error conditions
+2. **异步测试** (pytest-asyncio + SQLAlchemy Async):
+   - 每个测试使用独立引擎 (function scope)
+   - `pytest.ini` 配置 `asyncio_mode = auto`
+   - 测试环境连接池：`pool_size=1, max_overflow=0`
 
-### Testing Development Rules (测试开发规则)
-**重要**：以下规则基于实际开发中的问题总结，必须严格遵守以避免重复错误。
+3. **Session 管理**:
+   - 使用 `flush()` 代替 `commit()` 保持事务
+   - 标准模式：`session.begin() → yield → rollback() → close()`
+   - 禁止在 fixture 中手动 commit
 
-1. **Git Worktree规则**
-   - 使用git worktree时，所有文件操作（读取、写入、编辑）必须使用workdir参数指定正确的工作树目录
-   - 否则文件会被创建在错误的目录（主目录而非工作树目录）
+4. **测试数据**:
+   - 使用 UUID 生成唯一标识符
+   - 重复运行时数据必须唯一（用户名、代码等）
 
-2. **异步测试规则** (pytest-asyncio + SQLAlchemy Async)
-   - 每个测试使用独立引擎（function scope）避免连接池冲突
-   - 使用async_sessionmaker创建会话工厂
-   - 必须在pytest.ini中配置asyncio_mode=auto
-   - conftest.py中正确使用@pytest_asyncio.fixture装饰器
-   - 连接池配置：pool_size=1, max_overflow=0 (测试环境)
+5. **后端 API 测试**:
+   - Sanic 测试客户端与异步 SQLAlchemy 不兼容
+   - 使用异步测试函数并通过 API 创建数据
+   - 禁止在测试中使用 `test_session` 创建预置数据
+   - 模式：
+   ```python
+   @pytest.mark.asyncio
+   async def test_xxx(app):
+       token = create_access_token(TEST_USER_ID, "admin", ["perm"])
+       config_response, _ = await app.test_client.post("/api/v1/price-configs", ...)
+       request, response = await app.test_client.post("/api/v1/price-bands", ...)
+   ```
 
-3. **Session管理规则**
-   - 测试中使用flush()代替commit()保持数据在事务中
-   - 使用嵌套事务（async with session.begin()）自动回滚
-   - 标准模式：session.begin() -> yield -> rollback() -> close()
-   - 不要在测试fixture中手动commit，会导致状态问题
+6. **前端 E2E**:
+   - main.ts 必须全局注册 Arco Design 组件
+   - 使用 `--headed` 模式调试渲染问题
+   - 表单验证使用 `formRef.validate()` 手动触发
 
-4. **测试数据规则**
-   - 使用UUID生成唯一标识符避免唯一性约束冲突
-   - 重复运行测试时数据必须唯一（用户名、客户代码、权限代码等）
+7. **路由权限守卫**:
+   - 遍历用户权限数组，而非路由 permissions 数组
+   - 正确：`permissions.some(perm => to.meta.permissions.includes(perm))`
 
-5. **模块导入规则**
-   - pytest.ini 仅配置（asyncio_mode），不导入模块
-   - 所有模块导入在 conftest.py 中完成
-   - 避免重复导入导致冲突
+8. **模型关系**:
+   - 双向关联使用 `TYPE_CHECKING` 避免循环导入
+   - 明确指定 `foreign_keys` 和 `back_populates`
 
- 6. **前端 E2E 测试规则** (Playwright + Arco Design)
-    - 确保 main.ts 中全局注册所有使用的 UI 组件库（如 Arco Design）
-    - 组件未注册会导致渲染失败，所有 E2E 测试失败
-    - 使用浏览器调试模式（headed）观察实际渲染问题
-    - 验证错误样式类需根据 UI 库实际输出调整（如 `.arco-form-item-error`）
-    - 表单验证需使用 formRef.validate() 手动触发
+9. **虚拟环境**:
+   - 所有 Python 命令必须在 venv 中执行
+   - `source venv/bin/activate && python ...`
 
- 7. **路由权限守卫规则** (Vue Router)
-    - 权限检查必须遍历用户权限数组，而非路由 meta.permissions 数组
-    - 错误示例：`to.meta.permissions.some(perm => permissions.includes(perm))`
-    - 正确示例：`permissions.some(perm => to.meta.permissions.includes(perm))`
-    - 通配符'*'权限检查需在用户权限循环中判断，而非在路由权限循环中
+## Tech Stack
 
- 8. **后端 API 测试规则** (Sanic + SQLAlchemy Async + pytest-asyncio)
-     - **架构限制**: Sanic 测试客户端使用同步模式，与异步 SQLAlchemy 不兼容
-     - **已知问题**:
-       - `RuntimeError: Event loop is closed` - 异步 SQLAlchemy 在 flush() 时事件循环已关闭
-       - `test_session.flush()` 不会被 await，数据不会提交到数据库
-       - 测试使用的事务隔离与 Sanic 蓝图的生产数据库连接不一致
-       - `AttributeError: attached to a different loop` - 事件循环冲突
-     - **根本原因**: Sanic 测试客户端创建自己的事件循环，与 SQLAlchemy 异步引擎的事件循环冲突
-     - **解决方案**:
-       - 使用异步测试函数 (`async def`) 并通过 API 创建测试数据
-       - 避免在测试中使用 `test_session` 创建预置数据
-       - 每个测试通过 API 独立创建所需数据（先创建 PriceConfig，再创建 PriceBand）
-       - 使用 UUID 生成唯一代码避免唯一约束冲突
-       - 使用 `create_access_token()` 生成测试 token
-     - **测试模式**:
-       ```python
-       @pytest.mark.asyncio
-       async def test_xxx(app):
-           token = create_access_token(TEST_USER_ID, "admin", ["permission"])
-           # 通过 API 创建依赖数据
-           config_response, _ = await app.test_client.post("/api/v1/price-configs", ...)
-           # 执行测试操作
-           request, response = await app.test_client.post("/api/v1/price-bands", ...)
-       ```
-     - **替代方案**:
-       - 使用集成测试直接测试 Service 层（不通过 HTTP）
-       - 使用纯异步测试框架（如 aiohttp）替代 Sanic 测试客户端
+### Frontend
+Vue 3 + TypeScript + Arco Design + Pinia + Vue Router + Axios + ECharts + Vite + Playwright
 
- 9. **数据库配置规则** (Phase 1.5 经验总结)
-     - 测试数据库类型应与生产数据库一致（避免 SQLite 测试 PostgreSQL/MySQL 特性）
-     - 连接池配置需要根据数据库类型判断是否应用
-       ```python
-       if settings.asyncpg_url.startswith("sqlite"):
-           engine = create_async_engine(settings.asyncpg_url, echo=False)
-       else:
-           engine = create_async_engine(
-               settings.asyncpg_url,
-               echo=False,
-               pool_pre_ping=True,
-               pool_size=1,
-               max_overflow=0,
-           )
-       ```
-     - 使用 Python 虚拟环境：`source venv/bin/activate && python ...`
-     - 不要在 macOS 系统 Python 2.7 上运行 Python 3 代码
+### Backend
+Sanic 23.6.0 + SQLAlchemy 2.0 Async + PostgreSQL (asyncpg) + Alembic + Pydantic 2 + JWT + pytest-asyncio
 
- 10. **模型关系规则** (Phase 1.5 经验总结)
-      - 双向关联使用 `TYPE_CHECKING` 避免循环导入
-        ```python
-        from typing import TYPE_CHECKING
-        if TYPE_CHECKING:
-            from .customer import Customer
-        ```
-      - 明确指定 `foreign_keys` 参数避免歧义
-      - 使用 `back_populates` 保持双向同步
-
- 11. **服务层规则** (Phase 1.5 经验总结)
-      - 业务逻辑封装在服务类中（如 `HealthService`, `BillingService`）
-      - 服务方法接受 `AsyncSession` 作为参数
-      - 使用静态方法或依赖注入
-      - 蓝图只负责 HTTP 处理，调用服务层执行业务逻辑
-
- 12. **配置文件规则** (Phase 1.5 经验总结)
-      - 使用 `pydantic-settings` 管理配置
-      - 支持通过环境变量覆盖配置
-      - 数据库 URL 使用属性方法动态生成
-      - 支持多数据库类型切换（`db_type` 配置）
-      ```python
-      @property
-      def database_url(self) -> str:
-          if self.db_type == "mysql":
-              return f"mysql+aiomysql://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
-          else:
-              return f"postgresql+asyncpg://{...}"
-      ```
-
- 13. **Python 虚拟环境规则** (Phase 1.5 经验总结)
-       - 所有 Python 命令必须在虚拟环境中执行
-       - 检查命令：`which python` 应指向 venv 目录
-       - 激活虚拟环境：`source venv/bin/activate`
-       - 避免使用系统 Python（Python 2.7）
-
- 14. **Phase 7 客户转移开发经验总结**
-       - **TDD 开发流程**: 先创建测试文件 (test_transfer_api.py)，再实现功能
-       - **Service 层测试**: 由于 Sanic 测试客户端与异步 SQLAlchemy 的兼容性问题 (见规则 8)，
-         优先编写 Service 层集成测试 (test_transfer_service.py) 验证业务逻辑
-       - **模型关系**: 
-         - 使用 `TYPE_CHECKING` 避免循环导入
-         - 双向关联明确指定 `foreign_keys` 和 `back_populates`
-         - Transfer 模型与 Customer、User 建立多个外键关联
-         - 使用 `relationship` 的 `foreign_keys` 参数区分多个 User 关联
-       - **Enum 状态管理**: 使用 SQLAlchemy Enum 限制 status 字段 (pending/approved/rejected/completed)
-       - **迁移脚本**: 迁移脚本支持 migrate 和 rollback，使用 `DROP TABLE IF EXISTS ... CASCADE`
-       - **蓝图注册**: 同时在 app/__init__.py 和 tests/conftest.py 中注册蓝图
-       - **语法验证**: 所有文件创建后运行 `python -m py_compile` 验证语法
-       - **测试验证**: Service 层测试 9 个用例全部通过，验证了创建、审批、拒绝、完成等核心功能
-       - **API 测试限制**: Sanic 测试客户端与异步 SQLAlchemy 存在事件循环冲突，
-         需通过 Service 层测试验证功能，或等待 Sanic 测试客户端修复
-
-### Security
-- Never commit secrets, API keys, or credentials
-- Validate and sanitize all user inputs
-- Follow principle of least privilege
-- Keep dependencies updated
-
-## Additional Notes
-
-- This file should be updated as the project grows
-- Check for technology-specific configuration files for additional conventions
-- When adding new features, maintain consistency with existing code style
+## Security
+- 禁止提交密钥/凭证
+- 验证所有用户输入
+- 最小权限原则

@@ -71,7 +71,7 @@ pip install -r requirements.txt
 **4. 配置环境变量**
 ```bash
 # 复制环境配置文件
-cp .env.example .env
+cp ../.env.example .env
 
 # 编辑.env文件，设置以下变量：
 DB_USER=postgres
@@ -92,6 +92,7 @@ alembic upgrade head
 
 # 创建初始数据
 python init_db.py
+python init_role_permissions.py
 ```
 
 **6. 启动后端服务**
