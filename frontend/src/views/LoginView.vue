@@ -11,9 +11,9 @@
               </div>
               <span class="brand-name">客户运营中台</span>
             </div>
-            <h1 class="brand-title">数据驱动的<br>客户运营管理</h1>
+            <h1 class="brand-title">数据驱动的<br />客户运营管理</h1>
             <p class="brand-subtitle">
-              告别 Excel 分散管理，实现客户健康度自动监控<br>
+              告别 Excel 分散管理，实现客户健康度自动监控<br />
               结算单自动生成，运营效率提升 70%
             </p>
           </div>
@@ -114,16 +114,28 @@
           <div class="login-tips">
             <p>测试账号</p>
             <div class="role-tags">
-              <a-tag color="arcoblue" @click="fillTestAccount('admin', 'admin123')">
+              <a-tag
+                color="arcoblue"
+                @click="fillTestAccount('admin', 'admin123')"
+              >
                 admin / admin123
               </a-tag>
-              <a-tag color="green" @click="fillTestAccount('manager', 'manager123')">
+              <a-tag
+                color="green"
+                @click="fillTestAccount('manager', 'manager123')"
+              >
                 manager / manager123
               </a-tag>
-              <a-tag color="orange" @click="fillTestAccount('specialist', 'specialist123')">
+              <a-tag
+                color="orange"
+                @click="fillTestAccount('specialist', 'specialist123')"
+              >
                 specialist / specialist123
               </a-tag>
-              <a-tag color="purple" @click="fillTestAccount('sales', 'sales123')">
+              <a-tag
+                color="purple"
+                @click="fillTestAccount('sales', 'sales123')"
+              >
                 sales / sales123
               </a-tag>
             </div>
@@ -135,58 +147,66 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { Message } from '@arco-design/web-vue'
-import { useUserStore } from '@/stores/user'
+import { ref, reactive } from "vue";
+import { useRouter } from "vue-router";
+import { Message } from "@arco-design/web-vue";
+import { useUserStore } from "@/stores/user";
 
-const router = useRouter()
-const userStore = useUserStore()
-const formRef = ref()
+const router = useRouter();
+const userStore = useUserStore();
+const formRef = ref();
 
 const form = reactive({
-  username: '',
-  password: '',
-  remember: false
-})
+  username: "",
+  password: "",
+  remember: false,
+});
 
-const loading = ref(false)
+const loading = ref(false);
 
 const rules = {
-  username: [{ required: true, message: '请输入用户名' }],
-  password: [{ required: true, message: '请输入密码' }]
-}
+  username: [
+    { required: true, message: "请输入用户名" },
+    { minLength: 3, message: "用户名至少 3 个字符" },
+  ],
+  password: [
+    { required: true, message: "请输入密码" },
+    { minLength: 6, message: "密码至少 6 个字符" },
+  ],
+};
 
 const fillTestAccount = (username: string, password: string) => {
-  form.username = username
-  form.password = password
-}
+  form.username = username;
+  form.password = password;
+};
 
 const handleLogin = async () => {
   try {
-    await formRef.value?.validate()
+    await formRef.value?.validate();
   } catch {
-    return
+    return;
   }
 
-  loading.value = true
+  loading.value = true;
 
   try {
     await userStore.login({
       username: form.username,
-      password: form.password
-    })
-    Message.success('登录成功')
-    router.push('/dashboard')
+      password: form.password,
+    });
+    Message.success("登录成功");
+    router.push("/dashboard");
   } catch (error) {
-    Message.error('登录失败，请检查用户名和密码')
+    Message.error("登录失败，请检查用户名和密码");
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
+@import "@/styles/variables.scss";
+
 * {
   margin: 0;
   padding: 0;
@@ -198,7 +218,7 @@ const handleLogin = async () => {
   min-height: 100vh;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: $spacing-sm;
   background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
 }
 
@@ -208,15 +228,15 @@ const handleLogin = async () => {
   max-width: 1200px;
   min-height: 640px;
   background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg;
   overflow: hidden;
 }
 
 /* 左侧品牌区域 */
 .brand-section {
   flex: 1;
-  background: linear-gradient(145deg, #165dff 0%, #2b6de5 50%, #4080ff 100%);
+  background: $primary-gradient;
   padding: 60px 50px;
   display: flex;
   flex-direction: column;
@@ -227,18 +247,23 @@ const handleLogin = async () => {
 }
 
 .brand-section::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   right: -50%;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 70%
+  );
   animation: pulse 4s ease-in-out infinite;
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 0.5;
   }
@@ -395,11 +420,11 @@ const handleLogin = async () => {
   border-radius: 8px;
   font-size: 16px;
   font-weight: 500;
-  background: linear-gradient(135deg, #165dff 0%, #2b6de5 100%);
+  background: #165dff;
   border: none;
 
   &:hover {
-    background: linear-gradient(135deg, #2b6de5 0%, #4080ff 100%);
+    background: #0e42d2;
   }
 }
 
@@ -412,7 +437,7 @@ const handleLogin = async () => {
 
   &::before,
   &::after {
-    content: '';
+    content: "";
     flex: 1;
     height: 1px;
     background: #e5e6eb;

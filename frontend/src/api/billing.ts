@@ -51,18 +51,18 @@ export const billingApi = {
   },
 
   async get(id: string): Promise<Billing> {
-    const response = await api.get<Billing>(`/billing/${id}`)
-    return response.data
+    const response = await api.get<{ data: Billing }>(`/billing/${id}`)
+    return response.data.data
   },
 
   async create(data: BillingCreate): Promise<Billing> {
-    const response = await api.post<Billing>('/billing', data)
-    return response.data
+    const response = await api.post<{ data: Billing }>('/billing', data)
+    return response.data.data
   },
 
   async update(id: string, data: Partial<BillingCreate>): Promise<Billing> {
-    const response = await api.put<Billing>(`/billing/${id}`, data)
-    return response.data
+    const response = await api.put<{ data: Billing }>(`/billing/${id}`, data)
+    return response.data.data
   },
 
   async delete(id: string): Promise<void> {
@@ -70,17 +70,17 @@ export const billingApi = {
   },
 
   async markAsSent(id: string): Promise<Billing> {
-    const response = await api.post<Billing>(`/billing/${id}/send`)
-    return response.data
+    const response = await api.post<{ data: Billing }>(`/billing/${id}/send`)
+    return response.data.data
   },
 
   async markAsPaid(id: string): Promise<Billing> {
-    const response = await api.post<Billing>(`/billing/${id}/pay`)
-    return response.data
+    const response = await api.post<{ data: Billing }>(`/billing/${id}/pay`)
+    return response.data.data
   },
 
   async markException(id: string, reason: string): Promise<Billing> {
-    const response = await api.post<Billing>(`/billing/${id}/exception`, { reason })
-    return response.data
+    const response = await api.post<{ data: Billing }>(`/billing/${id}/exception`, { reason })
+    return response.data.data
   }
 }
