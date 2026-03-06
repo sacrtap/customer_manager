@@ -216,7 +216,7 @@ const handleLogin = async () => {
 /* 左侧品牌区域 */
 .brand-section {
   flex: 1;
-  background: linear-gradient(145deg, #165dff 0%, #2b6de5 50%, #4080ff 100%);
+  background: linear-gradient(135deg, #165DFF 0%, #0E42D2 100%);
   padding: 60px 50px;
   display: flex;
   flex-direction: column;
@@ -395,11 +395,11 @@ const handleLogin = async () => {
   border-radius: 8px;
   font-size: 16px;
   font-weight: 500;
-  background: linear-gradient(135deg, #165dff 0%, #2b6de5 100%);
+  background: #165DFF;
   border: none;
 
   &:hover {
-    background: linear-gradient(135deg, #2b6de5 0%, #4080ff 100%);
+    background: #0E42D2;
   }
 }
 
