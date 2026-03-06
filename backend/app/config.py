@@ -30,13 +30,8 @@ class Settings(BaseSettings):
 
     @property
     def asyncpg_url(self) -> str:
-        # 测试数据库 URL
-        if self.test_db_type == "sqlite":
-            return f"sqlite+aiosqlite:///{self.test_db_name}"
-        elif self.test_db_type == "mysql":
-            return f"mysql+aiomysql://{self.test_db_user}:{self.test_db_password}@{self.test_db_host}:{self.test_db_port}/{self.test_db_name}"
-        else:
-            return f"postgresql+asyncpg://{self.test_db_user}:{self.test_db_password}@{self.test_db_host}:{self.test_db_port}/{self.test_db_name}"
+        """测试数据库 URL - 使用 PostgreSQL"""
+        return f"postgresql+asyncpg://{self.test_db_user}:{self.test_db_password}@{self.test_db_host}:{self.test_db_port}/{self.test_db_name}"
 
     jwt_secret: str = "your-secret-key-change-in-production"
     jwt_algorithm: str = "HS256"

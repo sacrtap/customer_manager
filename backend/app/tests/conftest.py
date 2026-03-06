@@ -37,20 +37,13 @@ from app.blueprints import (
 @pytest_asyncio.fixture(scope="function")
 async def test_engine():
     """为每个测试创建独立的异步引擎"""
-    # SQLite 不支持池配置
-    if settings.asyncpg_url.startswith("sqlite"):
-        engine = create_async_engine(
-            settings.asyncpg_url,
-            echo=False,
-        )
-    else:
-        engine = create_async_engine(
-            settings.asyncpg_url,
-            echo=False,
-            pool_pre_ping=True,
-            pool_size=1,
-            max_overflow=0,
-        )
+    engine = create_async_engine(
+        settings.asyncpg_url,
+        echo=False,
+        pool_pre_ping=True,
+        pool_size=1,
+        max_overflow=0,
+    )
 
     # 创建所有表
     async with engine.begin() as conn:

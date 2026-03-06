@@ -33,7 +33,7 @@ def create_app():
     app.config.update(
         DATABASE_URL=settings.database_url,
         JWT_SECRET=settings.jwt_secret,
-        ENVIRONMENTATION=settings.environment,
+        ENVIRONMENT=settings.environment,
     )
 
     attach_auth_middleware(app)

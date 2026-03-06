@@ -29,14 +29,11 @@ async def migrate():
     print(f"连接到数据库：{settings.database_url}")
 
     # 创建引擎
-    if settings.asyncpg_url.startswith("sqlite"):
-        engine = create_async_engine(settings.database_url, echo=True)
-    else:
-        engine = create_async_engine(
-            settings.database_url,
-            echo=True,
-            pool_pre_ping=True,
-        )
+    engine = create_async_engine(
+        settings.database_url,
+        echo=True,
+        pool_pre_ping=True,
+    )
 
     try:
         # 创建所有表 (如果不存在)

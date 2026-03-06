@@ -21,19 +21,13 @@ from app.models.role import Role
 async def session():
     """创建独立的测试会话 - 每个测试使用独立引擎"""
     # 每个测试创建新引擎，避免事件循环冲突
-    if settings.asyncpg_url.startswith("sqlite"):
-        test_engine = create_async_engine(
-            settings.asyncpg_url,
-            echo=False,
-        )
-    else:
-        test_engine = create_async_engine(
-            settings.asyncpg_url,
-            echo=False,
-            pool_pre_ping=True,
-            pool_size=1,
-            max_overflow=0,
-        )
+    test_engine = create_async_engine(
+        settings.asyncpg_url,
+        echo=False,
+        pool_pre_ping=True,
+        pool_size=1,
+        max_overflow=0,
+    )
 
     # 创建表 (自动提交)
     async with test_engine.begin() as conn:
