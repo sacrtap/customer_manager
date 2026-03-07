@@ -417,39 +417,20 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
-@import "@/styles/variables.scss";
-
 .dashboard {
-  padding: $spacing-md;
+  padding: 24px;
 }
 
 /* 欢迎横幅 */
 .welcome-banner {
-  background: linear-gradient(135deg, #165dff 0%, #0e42d2 100%);
-  border-radius: 12px;
+  background: var(--color-primary-light-1);
+  border-radius: var(--border-radius-medium);
   padding: 32px;
-  color: white;
+  color: var(--color-primary);
   margin-bottom: 24px;
-  position: relative;
-  overflow: hidden;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.welcome-banner::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 60%;
-  height: 200%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.1) 0%,
-    transparent 70%
-  );
-  transform: rotate(-15deg);
 }
 
 .welcome-text h2 {
@@ -460,7 +441,7 @@ onUnmounted(() => {
 
 .welcome-text p {
   font-size: 14px;
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 .welcome-stats {
@@ -483,7 +464,7 @@ onUnmounted(() => {
 
 .welcome-stat-label {
   font-size: 13px;
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 /* 统计卡片 */
@@ -495,10 +476,10 @@ onUnmounted(() => {
 }
 
 .stat-card {
-  background: white;
-  border-radius: 12px;
+  background: var(--color-bg-1);
+  border-radius: var(--border-radius-medium);
   padding: 24px;
-  border: 1px solid #e5e6eb;
+  border: 1px solid var(--color-border);
 }
 
 .stat-card-header {
@@ -510,13 +491,13 @@ onUnmounted(() => {
 
 .stat-card-title {
   font-size: 14px;
-  color: #86909c;
+  color: var(--color-text-3);
 }
 
 .stat-card-icon {
   width: 44px;
   height: 44px;
-  border-radius: 10px;
+  border-radius: var(--border-radius-medium);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -524,45 +505,29 @@ onUnmounted(() => {
 }
 
 .stat-card-icon.blue {
-  background: linear-gradient(
-    135deg,
-    rgba(22, 93, 255, 0.1) 0%,
-    rgba(22, 93, 255, 0.05) 100%
-  );
-  color: #165dff;
+  background: var(--color-primary-light-1);
+  color: var(--color-primary);
 }
 
 .stat-card-icon.green {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 180, 42, 0.1) 0%,
-    rgba(0, 180, 42, 0.05) 100%
-  );
-  color: #00b42a;
+  background: var(--color-success-light-1);
+  color: var(--color-success);
 }
 
 .stat-card-icon.orange {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 125, 0, 0.1) 0%,
-    rgba(255, 125, 0, 0.05) 100%
-  );
-  color: #ff7d00;
+  background: var(--color-warning-light-1);
+  color: var(--color-warning);
 }
 
 .stat-card-icon.red {
-  background: linear-gradient(
-    135deg,
-    rgba(245, 63, 63, 0.1) 0%,
-    rgba(245, 63, 63, 0.05) 100%
-  );
-  color: #f53f3f;
+  background: var(--color-danger-light-1);
+  color: var(--color-danger);
 }
 
 .stat-card-value {
   font-size: 32px;
   font-weight: 700;
-  color: #1d2129;
+  color: var(--color-text-1);
   margin-bottom: 8px;
 }
 
@@ -583,17 +548,17 @@ onUnmounted(() => {
 }
 
 .stat-card-trend.up {
-  background: rgba(0, 180, 42, 0.1);
-  color: #00b42a;
+  background: var(--color-success-light-1);
+  color: var(--color-success);
 }
 
 .stat-card-trend.down {
-  background: rgba(245, 63, 63, 0.1);
-  color: #f53f3f;
+  background: var(--color-danger-light-1);
+  color: var(--color-danger);
 }
 
 .stat-card-sub {
-  color: #86909c;
+  color: var(--color-text-3);
 }
 
 /* 图表区域 */
@@ -605,10 +570,10 @@ onUnmounted(() => {
 }
 
 .chart-card {
-  background: white;
-  border-radius: 12px;
+  background: var(--color-bg-1);
+  border-radius: var(--border-radius-medium);
   padding: 24px;
-  border: 1px solid #e5e6eb;
+  border: 1px solid var(--color-border);
 }
 
 .chart-header {
@@ -621,7 +586,7 @@ onUnmounted(() => {
 .chart-title {
   font-size: 16px;
   font-weight: 600;
-  color: #1d2129;
+  color: var(--color-text-1);
 }
 
 .chart-actions {
@@ -645,10 +610,10 @@ onUnmounted(() => {
 }
 
 .table-card {
-  background: white;
-  border-radius: 12px;
+  background: var(--color-bg-1);
+  border-radius: var(--border-radius-medium);
   padding: 24px;
-  border: 1px solid #e5e6eb;
+  border: 1px solid var(--color-border);
 }
 
 .table-header {
@@ -661,16 +626,16 @@ onUnmounted(() => {
 .table-title {
   font-size: 16px;
   font-weight: 600;
-  color: #1d2129;
+  color: var(--color-text-1);
 }
 
 .view-all {
   font-size: 14px;
-  color: #165dff;
+  color: var(--color-primary);
   cursor: pointer;
 
   &:hover {
-    color: #4080ff;
+    color: var(--color-primary-light-1);
   }
 }
 
@@ -686,18 +651,18 @@ onUnmounted(() => {
 }
 
 .risk-badge.high {
-  background: rgba(245, 63, 63, 0.1);
-  color: #f53f3f;
+  background: var(--color-danger-light-1);
+  color: var(--color-danger);
 }
 
 .risk-badge.medium {
-  background: rgba(255, 125, 0, 0.1);
-  color: #ff7d00;
+  background: var(--color-warning-light-1);
+  color: var(--color-warning);
 }
 
 .risk-badge.low {
-  background: rgba(255, 202, 43, 0.1);
-  color: #f7ba1e;
+  background: var(--color-warning-light-2);
+  color: var(--color-warning);
 }
 
 /* 价值等级标签 */
@@ -713,28 +678,28 @@ onUnmounted(() => {
 }
 
 .tier-badge.S {
-  background: linear-gradient(135deg, #ff7d00 0%, #ff9a2e 100%);
-  color: white;
+  background: var(--color-warning-light-1);
+  color: var(--color-warning);
 }
 
 .tier-badge.A {
-  background: linear-gradient(135deg, #165dff 0%, #4080ff 100%);
-  color: white;
+  background: var(--color-primary-light-1);
+  color: var(--color-primary);
 }
 
 .tier-badge.B {
-  background: linear-gradient(135deg, #00b42a 0%, #23c343 100%);
-  color: white;
+  background: var(--color-success-light-1);
+  color: var(--color-success);
 }
 
 .tier-badge.C {
-  background: linear-gradient(135deg, #86909c 0%, #a5abb3 100%);
-  color: white;
+  background: var(--color-text-3);
+  color: var(--color-text-1);
 }
 
 .tier-badge.D {
-  background: linear-gradient(135deg, #c9cdd4 0%, #e5e6eb 100%);
-  color: #4e5969;
+  background: var(--color-fill-3);
+  color: var(--color-text-2);
 }
 
 /* 响应式 */
