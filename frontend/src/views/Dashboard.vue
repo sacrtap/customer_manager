@@ -1,28 +1,26 @@
 <template>
   <div class="dashboard">
     <!-- 欢迎横幅 -->
-    <div class="welcome-banner">
-      <div class="welcome-content">
-        <h2 class="welcome-title">👋 欢迎回来，{{ userInfo.real_name }}</h2>
-        <p class="welcome-subtitle">
-          今天是 {{ currentDate }}，以下是您的运营概览
-        </p>
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <h2>早上好，{{ userInfo.real_name }} 👋</h2>
+          <p>今天是 {{ currentDate }}，祝您工作愉快！</p>
+        </div>
         <div class="welcome-stats">
           <div class="welcome-stat">
-            <span class="welcome-stat-value">48</span>
-            <span class="welcome-stat-label">待处理预警</span>
+            <div class="welcome-stat-value">{{ stats.total_customers.toLocaleString() }}</div>
+            <div class="welcome-stat-label">客户总数</div>
           </div>
           <div class="welcome-stat">
-            <span class="welcome-stat-value">12</span>
-            <span class="welcome-stat-label">本月已唤醒</span>
-          </div>
-          <div class="welcome-stat">
-            <span class="welcome-stat-value">¥2.4M</span>
-            <span class="welcome-stat-label">本月结算金额</span>
+            <div class="welcome-stat-value">
+              {{ stats.total_customers > 0
+                ? Math.round((stats.healthy_customers / stats.total_customers) * 100)
+                : 0 }}%
+            </div>
+            <div class="welcome-stat-label">活跃率</div>
           </div>
         </div>
       </div>
-    </div>
 
     <!-- 统计卡片 -->
     <div class="stats-grid">
@@ -98,9 +96,9 @@
           <span class="chart-title">客户健康度趋势</span>
           <div class="chart-actions">
             <a-radio-group type="button" size="small" v-model="trendPeriod">
-              <a-radio value="week">本周</a-radio>
-              <a-radio value="month">本月</a-radio>
-              <a-radio value="quarter">本季</a-radio>
+              <a-radio value="week">7天</a-radio>
+              <a-radio value="month">30天</a-radio>
+              <a-radio value="quarter">90天</a-radio>
             </a-radio-group>
           </div>
         </div>
@@ -454,21 +452,15 @@ onUnmounted(() => {
   transform: rotate(-15deg);
 }
 
-.welcome-content {
-  position: relative;
-  z-index: 1;
-}
-
-.welcome-title {
+.welcome-text h2 {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 8px;
 }
 
-.welcome-subtitle {
+.welcome-text p {
   font-size: 14px;
   opacity: 0.9;
-  margin-bottom: 20px;
 }
 
 .welcome-stats {
