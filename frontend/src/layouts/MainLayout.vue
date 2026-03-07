@@ -433,7 +433,7 @@ const handleMenuSelect = (key: string) => {
       router.push("/billing/exceptions");
       break;
     case "transfer-create":
-      router.push("/transfers/new");
+      router.push("/transfers/create");
       break;
     case "transfer-history":
       router.push("/transfers/history");

@@ -165,6 +165,83 @@ const routes: AppRouteRecordRaw[] = [
         }
       },
       {
+        path: 'health/dashboard',
+        name: 'HealthDashboard',
+        component: () => import('@/views/health/Dashboard.vue'),
+        meta: {
+          title: '健康度仪表盘',
+          requiresAuth: true,
+          icon: 'icon-bar-chart',
+          permissions: ['health.view']
+        }
+      },
+      {
+        path: 'health/risks',
+        name: 'HealthRisks',
+        component: () => import('@/views/health/RiskList.vue'),
+        meta: {
+          title: '风险客户',
+          requiresAuth: true,
+          icon: 'icon-bar-chart',
+          permissions: ['health.risk']
+        }
+      },
+      {
+        path: 'health/zombies',
+        name: 'HealthZombies',
+        component: () => import('@/views/health/ZombieList.vue'),
+        meta: {
+          title: '僵尸客户',
+          requiresAuth: true,
+          icon: 'icon-bar-chart',
+          permissions: ['health.zombie']
+        }
+      },
+      {
+        path: 'billing/generate',
+        name: 'BillingGenerate',
+        component: () => import('@/views/billing/Generate.vue'),
+        meta: {
+          title: '结算单生成',
+          requiresAuth: true,
+          icon: 'icon-file',
+          permissions: ['billing.create']
+        }
+      },
+      {
+        path: 'billing/list',
+        name: 'BillingList',
+        component: () => import('@/views/billing/BillingList.vue'),
+        meta: {
+          title: '结算单列表',
+          requiresAuth: true,
+          icon: 'icon-file',
+          permissions: ['billing.view']
+        }
+      },
+      {
+        path: 'billing/exceptions',
+        name: 'BillingExceptions',
+        component: () => import('@/views/billing/ExceptionList.vue'),
+        meta: {
+          title: '异常处理',
+          requiresAuth: true,
+          icon: 'icon-file',
+          permissions: ['billing.edit']
+        }
+      },
+      {
+        path: 'system/permissions',
+        name: 'SystemPermissions',
+        component: () => import('@/views/system/Permissions.vue'),
+        meta: {
+          title: '权限配置',
+          requiresAuth: true,
+          icon: 'icon-settings',
+          permissions: ['system.permission']
+        }
+      },
+      {
         path: 'transfers/create',
         name: 'TransferCreate',
         component: () => import('@/views/transfer/TransferCreate.vue'),
@@ -185,6 +262,11 @@ const routes: AppRouteRecordRaw[] = [
           icon: 'icon-history',
           permissions: ['customer.transfer.view']
         }
+      },
+      // 兼容旧路径 - 重定向到新路径
+      {
+        path: 'transfers/new',
+        redirect: '/transfers/create'
       }
     ]
   }

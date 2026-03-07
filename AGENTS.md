@@ -119,6 +119,12 @@ npx playwright test --headed        # 有头调试
    - 所有 Python 命令必须在 venv 中执行
    - `source venv/bin/activate && python ...`
 
+10. **路由与菜单同步**:
+    - 新增页面时需同时更新 `router/index.ts` 和 `MainLayout.vue`
+    - 路由 path 与菜单 key 需保持一致（如 `/transfers/create` 对应 `transfer-create`）
+    - 权限配置需检查组件是否存在（如 `Permissions.vue`）
+    - 兼容旧路径时使用 redirect 重定向
+
 ## Tech Stack
 
 ### Frontend
