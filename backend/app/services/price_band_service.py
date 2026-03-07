@@ -1,6 +1,7 @@
 """Price Band Service - 价格区间业务逻辑"""
 
 from typing import Any, Dict, List, Optional
+from datetime import datetime
 
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -33,6 +34,7 @@ class PriceBandService:
             valid_from=data.get("valid_from"),
             valid_until=data.get("valid_until"),
             created_by=created_by,
+            created_at=datetime.now(),
         )
         session.add(price_band)
         await session.flush()

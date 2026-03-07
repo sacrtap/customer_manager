@@ -27,6 +27,7 @@ class PricingStrategyService:
             valid_from=data.get("valid_from"),
             valid_to=data.get("valid_to"),
             created_by=created_by,
+            created_at=datetime.now(),
         )
 
         session.add(strategy)
