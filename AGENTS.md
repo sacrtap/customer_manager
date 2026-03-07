@@ -127,6 +127,35 @@ Vue 3 + TypeScript + Arco Design + Pinia + Vue Router + Axios + ECharts + Vite +
 ### Backend
 Sanic 23.6.0 + SQLAlchemy 2.0 Async + PostgreSQL (asyncpg) + Alembic + Pydantic 2 + JWT + pytest-asyncio
 
+## Arco Design CSS 变量 (前端样式规范)
+
+**颜色**:
+- `var(--color-primary)` - 主色 (#165DFF)
+- `var(--color-primary-light-1)` - 主色浅色背景
+- `var(--color-success)` - 成功色 (#00B42A)
+- `var(--color-warning)` - 警告色 (#FF7D00)
+- `var(--color-danger)` - 危险色 (#F53F3F)
+
+**背景**:
+- `var(--color-bg-1)` - 主背景 (white)
+- `var(--color-bg-2)` - 次级背景 (#F7F8FA)
+- `var(--color-fill-2)` - 填充背景
+
+**文本**:
+- `var(--color-text-1)` - 主文本 (#1D2129)
+- `var(--color-text-2)` - 次级文本
+- `var(--color-text-3)` - 辅助文本 (#86909C)
+
+**边框/圆角**:
+- `var(--color-border)` - 边框色 (#E5E6EB)
+- `var(--border-radius-medium)` - 中等圆角 (4px)
+- `var(--border-radius-large)` - 大圆角 (8px)
+
+**使用规范**:
+- 禁止使用自定义渐变 (`linear-gradient`)
+- 使用 `border: 1px solid var(--color-border)` 代替阴影
+- `variables.scss` 仅保留颜色变量供 JS 逻辑引用
+
 ## Security
 - 禁止提交密钥/凭证
 - 验证所有用户输入
