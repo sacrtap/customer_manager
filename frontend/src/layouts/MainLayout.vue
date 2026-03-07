@@ -259,8 +259,8 @@
                   <a-avatar
                     :size="32"
                     :style="{
-                      background:
-                        'linear-gradient(135deg, #165dff 0%, #4080ff 100%)',
+                      background: 'var(--color-primary-light-1)',
+                      color: 'var(--color-primary)',
                     }"
                   >
                     {{ userInfo.real_name?.charAt(0) }}
@@ -518,27 +518,28 @@ const showNotifications = () => {
   overflow: hidden;
 
   .layout-sider {
-    background: linear-gradient(180deg, #1d2129 0%, #0a0c10 100%);
+    background: var(--color-bg-1);
     height: 100vh;
     overflow: hidden;
+    border-right: 1px solid var(--color-border);
 
     .sidebar-header {
       height: 64px;
       display: flex;
       align-items: center;
       padding: 0 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid var(--color-border);
     }
 
     .sidebar-logo {
       width: 40px;
       height: 40px;
-      background: linear-gradient(135deg, #165dff 0%, #0e42d2 100%);
-      border-radius: 10px;
+      background: var(--color-primary-light-1);
+      border-radius: var(--border-radius-medium);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
+      color: var(--color-primary);
       font-size: 18px;
       font-weight: bold;
       margin-right: 12px;
@@ -546,66 +547,14 @@ const showNotifications = () => {
     }
 
     .sidebar-title {
-      color: #ffffff;
+      color: var(--color-text-1);
       font-size: 18px;
       font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-    }
-
-    .sidebar-menu {
-      padding: 16px 12px;
-      background: transparent;
-      border: none;
-
-      // 添加导航分组标题样式
-      :deep(.arco-menu-pop-header),
-      :deep(.arco-menu-inline-header) {
-        color: #86909c;
-        font-size: 12px;
-        padding: 12px 16px 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        background: transparent !important;
-      }
-
-      :deep(.arco-menu-item),
-      :deep(.arco-menu-pop-header),
-      :deep(.arco-menu-inline-header) {
-        color: #c9cdd4;
-        border-radius: 8px;
-        margin-bottom: 4px;
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.08);
-          color: #ffffff;
-        }
-      }
-
-      :deep(.arco-menu-item.arco-menu-selected) {
-        background: linear-gradient(90deg, #165dff 0%, #0e42d2 100%);
-        color: #ffffff;
-      }
-
-      :deep(.arco-menu-inline-header .arco-icon),
-      :deep(.arco-menu-item .arco-icon) {
-        font-size: 18px;
-      }
-
-      // 子菜单缩进
-      :deep(.arco-menu-inline) {
-        padding-left: 12px;
-      }
-
-      :deep(.arco-menu-inline .arco-menu-item) {
-        padding: 10px 16px 10px 32px !important;
-        font-size: 13px;
-      }
     }
 
     .sidebar-footer {
       padding: 16px 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid var(--color-border);
       position: absolute;
       bottom: 0;
       left: 0;
@@ -616,23 +565,23 @@ const showNotifications = () => {
         align-items: center;
         gap: 12px;
         padding: 12px 8px;
-        border-radius: 8px;
+        border-radius: var(--border-radius-medium);
         cursor: pointer;
         transition: all 0.2s;
 
         &:hover {
-          background: rgba(255, 255, 255, 0.08);
+          background: var(--color-fill-2);
         }
 
         .user-avatar-sidebar {
           width: 40px;
           height: 40px;
-          background: linear-gradient(135deg, #165dff 0%, #722ed1 100%);
+          background: var(--color-primary-light-1);
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: white;
+          color: var(--color-primary);
           font-size: 16px;
           font-weight: 600;
           flex-shrink: 0;
@@ -644,7 +593,7 @@ const showNotifications = () => {
 
           .user-name-sidebar {
             font-size: 14px;
-            color: #ffffff;
+            color: var(--color-text-1);
             font-weight: 500;
             white-space: nowrap;
             overflow: hidden;
@@ -653,7 +602,7 @@ const showNotifications = () => {
 
           .user-role-sidebar {
             font-size: 12px;
-            color: #86909c;
+            color: var(--color-text-3);
             margin-top: 2px;
           }
         }
@@ -663,8 +612,8 @@ const showNotifications = () => {
 
   .layout-header {
     height: 64px;
-    background: #ffffff;
-    border-bottom: 1px solid #e5e6eb;
+    background: var(--color-bg-1);
+    border-bottom: 1px solid var(--color-border);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -685,11 +634,11 @@ const showNotifications = () => {
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #4e5969;
+        color: var(--color-text-2);
         transition: all 0.2s;
 
         &:hover {
-          background: #f2f3f5;
+          background: var(--color-fill-2);
         }
       }
 
@@ -699,16 +648,16 @@ const showNotifications = () => {
         gap: 10px;
         cursor: pointer;
         padding: 6px 12px;
-        border-radius: 8px;
+        border-radius: var(--border-radius-medium);
         transition: all 0.2s;
 
         &:hover {
-          background: #f2f3f5;
+          background: var(--color-fill-2);
         }
 
         .user-name {
           font-size: 14px;
-          color: #1d2129;
+          color: var(--color-text-1);
           font-weight: 500;
         }
       }
@@ -716,7 +665,7 @@ const showNotifications = () => {
   }
 
   .layout-content {
-    background: #f7f8fa;
+    background: var(--color-fill-2);
     height: calc(100vh - 64px);
     overflow: auto;
   }
