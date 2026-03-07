@@ -29,58 +29,59 @@ const iconClass = computed(() => props.color);
 </script>
 
 <style scoped lang="scss">
-@import "@/styles/variables.scss";
-
 .stat-card {
-  @include stat-card;
+  background: var(--color-bg-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-medium);
+  padding: 24px;
 }
 
 .stat-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: $spacing-sm;
+  margin-bottom: 16px;
 }
 
 .stat-icon {
   width: 48px;
   height: 48px;
-  border-radius: $border-radius-md;
+  border-radius: var(--border-radius-medium);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: $font-size-lg;
+  font-size: 20px;
 }
 
 .stat-icon.blue {
-  background: $blue-gradient;
-  color: $primary-color;
+  background: var(--color-primary-light-1);
+  color: var(--color-primary);
 }
 
 .stat-icon.green {
-  background: $success-gradient;
-  color: $success-color;
+  background: var(--color-success-light-1);
+  color: var(--color-success);
 }
 
 .stat-icon.orange {
-  background: $warning-gradient;
-  color: $warning-color;
+  background: var(--color-warning-light-1);
+  color: var(--color-warning);
 }
 
 .stat-icon.red {
-  background: $danger-gradient;
-  color: $danger-color;
+  background: var(--color-danger-light-1);
+  color: var(--color-danger);
 }
 
 .stat-value {
-  font-size: $font-size-3xl;
+  font-size: 32px;
   font-weight: 700;
-  color: #1d2129;
+  color: var(--color-text-1);
   margin-bottom: 4px;
 }
 
 .stat-label {
-  font-size: $font-size-md;
-  color: #86909c;
+  font-size: 14px;
+  color: var(--color-text-3);
 }
 </style>
