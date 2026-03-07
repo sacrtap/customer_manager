@@ -11,7 +11,7 @@
       >
         <div class="sidebar-header">
           <div class="sidebar-logo">
-            <icon-user-group />
+            <span style="font-size: 18px; font-weight: bold;">CM</span>
           </div>
           <span v-if="!collapsed" class="sidebar-title">客户管理系统</span>
         </div>
