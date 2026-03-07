@@ -1,60 +1,16 @@
-// 主题颜色
+// 主题颜色 - 仅保留用于 JS 逻辑引用
+// 样式请使用 Arco Design CSS 变量:
+// - var(--color-primary)
+// - var(--color-success)
+// - var(--color-warning)
+// - var(--color-danger)
+// - var(--color-bg-1), var(--color-bg-2)
+// - var(--color-border)
+// - var(--border-radius-medium)
+// - 等更多变量参考：https://arco.design/vue/docs/token
+
 $primary-color: #165DFF;
 $primary-dark: #0E42D2;
 $success-color: #00B42A;
 $warning-color: #FF7D00;
 $danger-color: #F53F3F;
-
-// 渐变
-$primary-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
-$success-gradient: linear-gradient(135deg, rgba(0,180,42,0.1) 0%, rgba(0,180,42,0.05) 100%);
-$warning-gradient: linear-gradient(135deg, rgba(255,125,0,0.1) 0%, rgba(255,125,0,0.05) 100%);
-$danger-gradient: linear-gradient(135deg, rgba(245,63,63,0.1) 0%, rgba(245,63,63,0.05) 100%);
-$blue-gradient: linear-gradient(135deg, rgba(22,93,255,0.1) 0%, rgba(22,93,255,0.05) 100%);
-
-// 圆角
-$border-radius-sm: 8px;
-$border-radius-md: 12px;
-$border-radius-lg: 16px;
-
-// 阴影
-$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
-$shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
-$shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.1);
-
-// 间距
-$spacing-xs: 8px;
-$spacing-sm: 16px;
-$spacing-md: 24px;
-$spacing-lg: 32px;
-$spacing-xl: 40px;
-
-// 字体大小
-$font-size-sm: 12px;
-$font-size-md: 14px;
-$font-size-lg: 18px;
-$font-size-xl: 24px;
-$font-size-2xl: 28px;
-$font-size-3xl: 32px;
-
-// 断点
-$breakpoint-sm: 576px;
-$breakpoint-md: 768px;
-$breakpoint-lg: 992px;
-$breakpoint-xl: 1200px;
-
-// 统计卡片混合宏
-@mixin stat-card {
-  background: #ffffff;
-  border-radius: $border-radius-md;
-  padding: $spacing-md;
-  border: 1px solid #E5E6EB;
-}
-
-// 图表卡片混合宏
-@mixin chart-card {
-  background: #ffffff;
-  border-radius: $border-radius-md;
-  padding: $spacing-md;
-  border: 1px solid #E5E6EB;
-}
