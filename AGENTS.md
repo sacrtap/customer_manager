@@ -50,6 +50,20 @@ npx playwright test tests/e2e/example.spec.ts  # 单个文件
 npx playwright test --headed        # 有头调试
 ```
 
+### Deployment
+```bash
+# 一键部署 (生产环境)
+cd .worktrees/deploy
+./deploy.sh
+
+# 开发环境启动
+./start.sh
+
+# Docker Compose 手动部署
+docker-compose up -d
+docker-compose exec backend python init_db.py
+```
+
 ## Code Style Guidelines
 
 ### Naming

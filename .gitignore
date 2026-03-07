@@ -65,3 +65,8 @@ Thumbs.db
 
 # Worktrees
 .worktrees/
+
+# Frontend Test
+frontend/test-results/
+frontend/test-screenshot-*.png
+frontend/playwright-report/
