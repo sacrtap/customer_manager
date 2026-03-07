@@ -34,9 +34,7 @@
               <icon-user-group />
             </template>
             <template #title>客户管理</template>
-            <a-menu-item key="customer-list">
-              客户列表
-            </a-menu-item>
+            <a-menu-item key="customer-list"> 客户列表 </a-menu-item>
             <a-menu-item
               v-if="hasPermission('customer.import')"
               key="customer-import"
@@ -46,7 +44,9 @@
           </a-sub-menu>
 
           <a-sub-menu
-            v-if="hasAnyPermission(['health.view', 'health.risk', 'health.zombie'])"
+            v-if="
+              hasAnyPermission(['health.view', 'health.risk', 'health.zombie'])
+            "
             key="health"
           >
             <template #icon>
@@ -59,10 +59,7 @@
             >
               健康度仪表盘
             </a-menu-item>
-            <a-menu-item
-              v-if="hasPermission('health.risk')"
-              key="health-risks"
-            >
+            <a-menu-item v-if="hasPermission('health.risk')" key="health-risks">
               风险客户
             </a-menu-item>
             <a-menu-item
@@ -81,16 +78,10 @@
               <icon-star />
             </template>
             <template #title>价值评估</template>
-            <a-menu-item
-              v-if="hasPermission('tier.config')"
-              key="tier-config"
-            >
+            <a-menu-item v-if="hasPermission('tier.config')" key="tier-config">
               等级配置
             </a-menu-item>
-            <a-menu-item
-              v-if="hasPermission('tier.view')"
-              key="tier-history"
-            >
+            <a-menu-item v-if="hasPermission('tier.view')" key="tier-history">
               定级历史
             </a-menu-item>
           </a-sub-menu>
@@ -124,7 +115,13 @@
           </a-sub-menu>
 
           <a-sub-menu
-            v-if="hasAnyPermission(['billing.view', 'billing.create', 'billing.edit'])"
+            v-if="
+              hasAnyPermission([
+                'billing.view',
+                'billing.create',
+                'billing.edit',
+              ])
+            "
             key="billing"
           >
             <template #icon>
@@ -191,16 +188,10 @@
               <icon-settings />
             </template>
             <template #title>系统管理</template>
-            <a-menu-item
-              v-if="hasPermission('user.view')"
-              key="system-users"
-            >
+            <a-menu-item v-if="hasPermission('user.view')" key="system-users">
               用户管理
             </a-menu-item>
-            <a-menu-item
-              v-if="hasPermission('rbac.role')"
-              key="system-roles"
-            >
+            <a-menu-item v-if="hasPermission('rbac.role')" key="system-roles">
               角色管理
             </a-menu-item>
             <a-menu-item
@@ -242,7 +233,12 @@
             <a-space>
               <!-- 通知图标 -->
               <a-badge :count="notificationCount" :max-count="99">
-                <a-button shape="circle" type="text" @click="showNotifications" class="header-icon-btn">
+                <a-button
+                  shape="circle"
+                  type="text"
+                  @click="showNotifications"
+                  class="header-icon-btn"
+                >
                   <icon-notification />
                 </a-button>
               </a-badge>
@@ -255,7 +251,13 @@
               <!-- 用户信息下拉菜单 -->
               <a-dropdown @select="handleMenuSelect">
                 <div class="user-info">
-                  <a-avatar :size="32" :style="{ background: 'linear-gradient(135deg, #165dff 0%, #4080ff 100%)' }">
+                  <a-avatar
+                    :size="32"
+                    :style="{
+                      background:
+                        'linear-gradient(135deg, #165dff 0%, #4080ff 100%)',
+                    }"
+                  >
                     {{ userInfo.real_name?.charAt(0) }}
                   </a-avatar>
                   <span class="user-name">{{ userInfo.real_name }}</span>
@@ -294,213 +296,215 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { Modal, Message } from '@arco-design/web-vue'
-import { useUserStore } from '@/stores/user'
+import { ref, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { Modal, Message } from "@arco-design/web-vue";
+import { useUserStore } from "@/stores/user";
 
-const router = useRouter()
-const route = useRoute()
-const userStore = useUserStore()
+const router = useRouter();
+const route = useRoute();
+const userStore = useUserStore();
 
-const notificationCount = ref(0)
-const collapsed = ref(false)
+const notificationCount = ref(0);
+const collapsed = ref(false);
 
 // 用户信息
-const userInfo = computed(() => userStore.userInfo || { real_name: '用户' })
+const userInfo = computed(() => userStore.userInfo || { real_name: "用户" });
 
 // 当前页面标题
 const currentPageTitle = computed(() => {
-  const path = route.path
-  if (path === '/dashboard') return '工作台'
-  if (path.startsWith('/customers')) {
-    if (path === '/customers') return '客户列表'
-    if (path === '/customers/import') return '批量导入'
-    return '客户管理'
+  const path = route.path;
+  if (path === "/dashboard") return "工作台";
+  if (path.startsWith("/customers")) {
+    if (path === "/customers") return "客户列表";
+    if (path === "/customers/import") return "批量导入";
+    return "客户管理";
   }
-  if (path.startsWith('/health')) {
-    if (path === '/health/dashboard') return '健康度仪表盘'
-    if (path === '/health/risks') return '风险客户'
-    if (path === '/health/zombies') return '僵尸客户'
-    return '健康度监控'
+  if (path.startsWith("/health")) {
+    if (path === "/health/dashboard") return "健康度仪表盘";
+    if (path === "/health/risks") return "风险客户";
+    if (path === "/health/zombies") return "僵尸客户";
+    return "健康度监控";
   }
-  if (path.startsWith('/tiers')) {
-    if (path === '/tiers/config') return '等级配置'
-    if (path === '/tiers/history') return '定级历史'
-    return '价值评估'
+  if (path.startsWith("/tiers")) {
+    if (path === "/tiers/config") return "等级配置";
+    if (path === "/tiers/history") return "定级历史";
+    return "价值评估";
   }
-  if (path.startsWith('/pricing')) {
-    if (path === '/pricing/configs') return '价格配置'
-    if (path === '/pricing/bands') return '价格区间'
-    if (path === '/pricing/strategies') return '定价策略'
-    return '定价管理'
+  if (path.startsWith("/pricing")) {
+    if (path === "/pricing/configs") return "价格配置";
+    if (path === "/pricing/bands") return "价格区间";
+    if (path === "/pricing/strategies") return "定价策略";
+    return "定价管理";
   }
-  if (path.startsWith('/billing')) {
-    if (path === '/billing/generate') return '结算单生成'
-    if (path === '/billing/list') return '结算单列表'
-    if (path === '/billing/exceptions') return '异常处理'
-    return '结算管理'
+  if (path.startsWith("/billing")) {
+    if (path === "/billing/generate") return "结算单生成";
+    if (path === "/billing/list") return "结算单列表";
+    if (path === "/billing/exceptions") return "异常处理";
+    return "结算管理";
   }
-  if (path.startsWith('/transfers')) {
-    if (path === '/transfers/new') return '客户转移'
-    if (path === '/transfers/history') return '转移历史'
-    return '客户转移'
+  if (path.startsWith("/transfers")) {
+    if (path === "/transfers/new") return "客户转移";
+    if (path === "/transfers/history") return "转移历史";
+    return "客户转移";
   }
-  if (path.startsWith('/system')) {
-    if (path === '/system/users') return '用户管理'
-    if (path === '/system/roles') return '角色管理'
-    if (path === '/system/logs') return '操作日志'
-    if (path === '/system/permissions') return '权限配置'
-    return '系统管理'
+  if (path.startsWith("/system")) {
+    if (path === "/system/users") return "用户管理";
+    if (path === "/system/roles") return "角色管理";
+    if (path === "/system/logs") return "操作日志";
+    if (path === "/system/permissions") return "权限配置";
+    return "系统管理";
   }
-  return '首页'
-})
+  return "首页";
+});
 
 // 选中的菜单
 const selectedMenuKeys = computed(() => {
-  const path = route.path
-  if (path === '/dashboard') return ['dashboard']
-  if (path.startsWith('/customers')) {
-    if (path === '/customers') return ['customer', 'customer-list']
-    if (path === '/customers/import') return ['customer', 'customer-import']
+  const path = route.path;
+  if (path === "/dashboard") return ["dashboard"];
+  if (path.startsWith("/customers")) {
+    if (path === "/customers") return ["customer", "customer-list"];
+    if (path === "/customers/import") return ["customer", "customer-import"];
   }
-  if (path.startsWith('/health')) {
-    if (path === '/health/dashboard') return ['health', 'health-dashboard']
-    if (path === '/health/risks') return ['health', 'health-risks']
-    if (path === '/health/zombies') return ['health', 'health-zombies']
+  if (path.startsWith("/health")) {
+    if (path === "/health/dashboard") return ["health", "health-dashboard"];
+    if (path === "/health/risks") return ["health", "health-risks"];
+    if (path === "/health/zombies") return ["health", "health-zombies"];
   }
-  if (path.startsWith('/tiers')) {
-    if (path === '/tiers/config') return ['tier', 'tier-config']
-    if (path === '/tiers/history') return ['tier', 'tier-history']
+  if (path.startsWith("/tiers")) {
+    if (path === "/tiers/config") return ["tier", "tier-config"];
+    if (path === "/tiers/history") return ["tier", "tier-history"];
   }
-  if (path.startsWith('/pricing')) {
-    if (path === '/pricing/configs') return ['pricing', 'pricing-configs']
-    if (path === '/pricing/bands') return ['pricing', 'pricing-bands']
-    if (path === '/pricing/strategies') return ['pricing', 'pricing-strategies']
+  if (path.startsWith("/pricing")) {
+    if (path === "/pricing/configs") return ["pricing", "pricing-configs"];
+    if (path === "/pricing/bands") return ["pricing", "pricing-bands"];
+    if (path === "/pricing/strategies")
+      return ["pricing", "pricing-strategies"];
   }
-  if (path.startsWith('/billing')) {
-    if (path === '/billing/generate') return ['billing', 'billing-generate']
-    if (path === '/billing/list') return ['billing', 'billing-list']
-    if (path === '/billing/exceptions') return ['billing', 'billing-exceptions']
+  if (path.startsWith("/billing")) {
+    if (path === "/billing/generate") return ["billing", "billing-generate"];
+    if (path === "/billing/list") return ["billing", "billing-list"];
+    if (path === "/billing/exceptions")
+      return ["billing", "billing-exceptions"];
   }
-  if (path.startsWith('/transfers')) {
-    if (path === '/transfers/new') return ['transfer', 'transfer-create']
-    if (path === '/transfers/history') return ['transfer', 'transfer-history']
+  if (path.startsWith("/transfers")) {
+    if (path === "/transfers/new") return ["transfer", "transfer-create"];
+    if (path === "/transfers/history") return ["transfer", "transfer-history"];
   }
-  if (path.startsWith('/system')) {
-    if (path === '/system/users') return ['system', 'system-users']
-    if (path === '/system/roles') return ['system', 'system-roles']
-    if (path === '/system/logs') return ['system-logs']
-    if (path === '/system/permissions') return ['system', 'system-permissions']
+  if (path.startsWith("/system")) {
+    if (path === "/system/users") return ["system", "system-users"];
+    if (path === "/system/roles") return ["system", "system-roles"];
+    if (path === "/system/logs") return ["system-logs"];
+    if (path === "/system/permissions") return ["system", "system-permissions"];
   }
-  return []
-})
+  return [];
+});
 
 // 权限检查
 const hasPermission = (permission: string) => {
-  return userStore.hasPermission(permission)
-}
+  return userStore.hasPermission(permission);
+};
 
 const hasAnyPermission = (permissions: string[]) => {
-  return userStore.hasAnyPermission(permissions)
-}
+  return userStore.hasAnyPermission(permissions);
+};
 
 // 菜单选择处理
 const handleMenuSelect = (key: string) => {
   switch (key) {
-    case 'dashboard':
-      router.push('/dashboard')
-      break
-    case 'customer-list':
-      router.push('/customers')
-      break
-    case 'customer-import':
-      router.push('/customers/import')
-      break
-    case 'health-dashboard':
-      router.push('/health/dashboard')
-      break
-    case 'health-risks':
-      router.push('/health/risks')
-      break
-    case 'health-zombies':
-      router.push('/health/zombies')
-      break
-    case 'tier-config':
-      router.push('/tiers/config')
-      break
-    case 'tier-history':
-      router.push('/tiers/history')
-      break
-    case 'pricing-configs':
-      router.push('/pricing/configs')
-      break
-    case 'pricing-bands':
-      router.push('/pricing/bands')
-      break
-    case 'pricing-strategies':
-      router.push('/pricing/strategies')
-      break
-    case 'billing-generate':
-      router.push('/billing/generate')
-      break
-    case 'billing-list':
-      router.push('/billing/list')
-      break
-    case 'billing-exceptions':
-      router.push('/billing/exceptions')
-      break
-    case 'transfer-create':
-      router.push('/transfers/new')
-      break
-    case 'transfer-history':
-      router.push('/transfers/history')
-      break
-    case 'system-users':
-      router.push('/system/users')
-      break
-    case 'system-roles':
-      router.push('/system/roles')
-      break
-    case 'system-logs':
-      router.push('/system/logs')
-      break
-    case 'system-permissions':
-      router.push('/system/permissions')
-      break
-    case 'profile':
-      router.push('/profile')
-      break
-    case 'change-password':
-      router.push('/change-password')
-      break
-    case 'logout':
-      handleLogout()
-      break
+    case "dashboard":
+      router.push("/dashboard");
+      break;
+    case "customer-list":
+      router.push("/customers");
+      break;
+    case "customer-import":
+      router.push("/customers/import");
+      break;
+    case "health-dashboard":
+      router.push("/health/dashboard");
+      break;
+    case "health-risks":
+      router.push("/health/risks");
+      break;
+    case "health-zombies":
+      router.push("/health/zombies");
+      break;
+    case "tier-config":
+      router.push("/tiers/config");
+      break;
+    case "tier-history":
+      router.push("/tiers/history");
+      break;
+    case "pricing-configs":
+      router.push("/pricing/configs");
+      break;
+    case "pricing-bands":
+      router.push("/pricing/bands");
+      break;
+    case "pricing-strategies":
+      router.push("/pricing/strategies");
+      break;
+    case "billing-generate":
+      router.push("/billing/generate");
+      break;
+    case "billing-list":
+      router.push("/billing/list");
+      break;
+    case "billing-exceptions":
+      router.push("/billing/exceptions");
+      break;
+    case "transfer-create":
+      router.push("/transfers/new");
+      break;
+    case "transfer-history":
+      router.push("/transfers/history");
+      break;
+    case "system-users":
+      router.push("/system/users");
+      break;
+    case "system-roles":
+      router.push("/system/roles");
+      break;
+    case "system-logs":
+      router.push("/system/logs");
+      break;
+    case "system-permissions":
+      router.push("/system/permissions");
+      break;
+    case "profile":
+      router.push("/profile");
+      break;
+    case "change-password":
+      router.push("/change-password");
+      break;
+    case "logout":
+      handleLogout();
+      break;
   }
-}
+};
 
 // 退出登录
 const handleLogout = () => {
   Modal.confirm({
-    title: '确认退出',
-    content: '确定要退出登录吗?',
+    title: "确认退出",
+    content: "确定要退出登录吗?",
     onOk: async () => {
       try {
-        await userStore.logout()
-        Message.success('退出成功')
-        router.push('/login')
+        await userStore.logout();
+        Message.success("退出成功");
+        router.push("/login");
       } catch (error) {
-        Message.error('退出失败')
+        Message.error("退出失败");
       }
-    }
-  })
-}
+    },
+  });
+};
 
 // 显示通知
 const showNotifications = () => {
-  Message.info('暂无新通知')
-}
+  Message.info("暂无新通知");
+};
 </script>
 
 <style scoped lang="scss">
@@ -522,21 +526,23 @@ const showNotifications = () => {
     }
 
     .sidebar-logo {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, #165dff 0%, #4080ff 100%);
-      border-radius: 8px;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #165dff 0%, #0e42d2 100%);
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
+      font-size: 18px;
+      font-weight: bold;
       margin-right: 12px;
       flex-shrink: 0;
     }
 
     .sidebar-title {
       color: #ffffff;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 600;
       white-space: nowrap;
       overflow: hidden;
@@ -547,27 +553,48 @@ const showNotifications = () => {
       background: transparent;
       border: none;
 
+      // 添加导航分组标题样式
+      :deep(.arco-menu-pop-header),
+      :deep(.arco-menu-inline-header) {
+        color: #86909c;
+        font-size: 12px;
+        padding: 12px 16px 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: transparent !important;
+      }
+
       :deep(.arco-menu-item),
       :deep(.arco-menu-pop-header),
       :deep(.arco-menu-inline-header) {
-        color: rgba(255, 255, 255, 0.7);
+        color: #c9cdd4;
         border-radius: 8px;
         margin-bottom: 4px;
 
         &:hover {
-          background: rgba(255, 255, 255, 0.05);
+          background: rgba(255, 255, 255, 0.08);
           color: #ffffff;
         }
       }
 
       :deep(.arco-menu-item.arco-menu-selected) {
-        background: linear-gradient(135deg, #165DFF 0%, #0E42D2 100%);
+        background: linear-gradient(90deg, #165dff 0%, #0e42d2 100%);
         color: #ffffff;
       }
 
       :deep(.arco-menu-inline-header .arco-icon),
       :deep(.arco-menu-item .arco-icon) {
         font-size: 18px;
+      }
+
+      // 子菜单缩进
+      :deep(.arco-menu-inline) {
+        padding-left: 12px;
+      }
+
+      :deep(.arco-menu-inline .arco-menu-item) {
+        padding: 10px 16px 10px 32px !important;
+        font-size: 13px;
       }
     }
 
@@ -595,7 +622,7 @@ const showNotifications = () => {
         .user-avatar-sidebar {
           width: 40px;
           height: 40px;
-          background: linear-gradient(135deg, #165DFF 0%, #722ED1 100%);
+          background: linear-gradient(135deg, #165dff 0%, #722ed1 100%);
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -621,7 +648,7 @@ const showNotifications = () => {
 
           .user-role-sidebar {
             font-size: 12px;
-            color: #86909C;
+            color: #86909c;
             margin-top: 2px;
           }
         }
@@ -684,7 +711,7 @@ const showNotifications = () => {
   }
 
   .layout-content {
-    background: #f2f3f5;
+    background: #f7f8fa;
     height: calc(100vh - 64px);
     overflow: auto;
   }

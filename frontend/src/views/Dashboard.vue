@@ -427,12 +427,11 @@ onUnmounted(() => {
 
 /* 欢迎横幅 */
 .welcome-banner {
-  @include chart-card;
-  background: $primary-gradient;
-  border-radius: $border-radius-md;
-  padding: $spacing-lg;
+  background: linear-gradient(135deg, #165dff 0%, #0e42d2 100%);
+  border-radius: 12px;
+  padding: 32px;
   color: white;
-  margin-bottom: $spacing-md;
+  margin-bottom: 24px;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -474,22 +473,25 @@ onUnmounted(() => {
 
 .welcome-stats {
   display: flex;
-  gap: 40px;
+  gap: 32px;
 }
 
 .welcome-stat {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .welcome-stat-value {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
+  margin-bottom: 4px;
 }
 
 .welcome-stat-label {
   font-size: 13px;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 /* 统计卡片 */
@@ -497,63 +499,86 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-  margin-bottom: $spacing-md;
+  margin-bottom: 24px;
 }
 
 .stat-card {
-  @include stat-card;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #e5e6eb;
 }
 
 .stat-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: $spacing-sm;
+  margin-bottom: 16px;
 }
 
 .stat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: $border-radius-md;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: $font-size-lg;
+  font-size: 20px;
 }
 
 .stat-icon.blue {
-  background: $blue-gradient;
-  color: $primary-color;
+  background: linear-gradient(
+    135deg,
+    rgba(22, 93, 255, 0.1) 0%,
+    rgba(22, 93, 255, 0.05) 100%
+  );
+  color: #165dff;
 }
 
 .stat-icon.green {
-  background: $success-gradient;
-  color: $success-color;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 180, 42, 0.1) 0%,
+    rgba(0, 180, 42, 0.05) 100%
+  );
+  color: #00b42a;
 }
 
 .stat-icon.orange {
-  background: $warning-gradient;
-  color: $warning-color;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 125, 0, 0.1) 0%,
+    rgba(255, 125, 0, 0.05) 100%
+  );
+  color: #ff7d00;
 }
 
 .stat-icon.red {
-  background: $danger-gradient;
-  color: $danger-color;
+  background: linear-gradient(
+    135deg,
+    rgba(245, 63, 63, 0.1) 0%,
+    rgba(245, 63, 63, 0.05) 100%
+  );
+  color: #f53f3f;
 }
 
 .stat-trend {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
 }
 
 .stat-trend.up {
+  background: rgba(0, 180, 42, 0.1);
   color: #00b42a;
 }
 
 .stat-trend.down {
+  background: rgba(245, 63, 63, 0.1);
   color: #f53f3f;
 }
 
@@ -561,7 +586,7 @@ onUnmounted(() => {
   font-size: 32px;
   font-weight: 700;
   color: #1d2129;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .stat-label {
@@ -574,11 +599,14 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 20px;
-  margin-bottom: $spacing-md;
+  margin-bottom: 24px;
 }
 
 .chart-card {
-  @include chart-card;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #e5e6eb;
 }
 
 .chart-header {
@@ -615,7 +643,10 @@ onUnmounted(() => {
 }
 
 .table-card {
-  @include chart-card;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #e5e6eb;
 }
 
 .table-header {
