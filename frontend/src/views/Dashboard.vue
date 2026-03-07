@@ -25,67 +25,67 @@
     <!-- 统计卡片 -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon blue">
-            <icon-user-group />
+        <div class="stat-card-header">
+          <div>
+            <div class="stat-card-title">总客户数</div>
           </div>
-          <div class="stat-trend up">
-            <icon-arrow-up />
-            <span>+2.5%</span>
+          <div class="stat-card-icon blue">
+            👥
           </div>
         </div>
-        <div class="stat-value">
-          {{ stats.total_customers.toLocaleString() }}
+        <div class="stat-card-value">{{ stats.total_customers.toLocaleString() }}</div>
+        <div class="stat-card-footer">
+          <span class="stat-card-trend up">↑ 12 本月新增</span>
+          <span class="stat-card-sub">较上月 +0.9%</span>
         </div>
-        <div class="stat-label">客户总数</div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon green">
-            <icon-check-circle />
+        <div class="stat-card-header">
+          <div>
+            <div class="stat-card-title">活跃客户</div>
           </div>
-          <div class="stat-trend up">
-            <icon-arrow-up />
-            <span>+5.2%</span>
+          <div class="stat-card-icon green">
+            ✅
           </div>
         </div>
-        <div class="stat-value">
-          {{ stats.healthy_customers.toLocaleString() }}
+        <div class="stat-card-value">{{ stats.healthy_customers.toLocaleString() }}</div>
+        <div class="stat-card-footer">
+          <span class="stat-card-trend up">↑ 82.5%</span>
+          <span class="stat-card-sub">活跃率</span>
         </div>
-        <div class="stat-label">活跃客户</div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon orange">
-            <icon-exclamation-circle />
+        <div class="stat-card-header">
+          <div>
+            <div class="stat-card-title">风险客户</div>
           </div>
-          <div class="stat-trend down">
-            <icon-arrow-down />
-            <span>-1.2%</span>
+          <div class="stat-card-icon orange">
+            ⚠️
           </div>
         </div>
-        <div class="stat-value">
-          {{ stats.at_risk_customers.toLocaleString() }}
+        <div class="stat-card-value">{{ stats.at_risk_customers.toLocaleString() }}</div>
+        <div class="stat-card-footer">
+          <span class="stat-card-trend down">↓ 5 较上周</span>
+          <span class="stat-card-sub">3.6% 占比</span>
         </div>
-        <div class="stat-label">风险客户</div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-header">
-          <div class="stat-icon red">
-            <icon-close-circle />
+        <div class="stat-card-header">
+          <div>
+            <div class="stat-card-title">僵尸客户</div>
           </div>
-          <div class="stat-trend down">
-            <icon-arrow-down />
-            <span>-3.8%</span>
+          <div class="stat-card-icon red">
+            💀
           </div>
         </div>
-        <div class="stat-value">
-          {{ stats.zombie_customers.toLocaleString() }}
+        <div class="stat-card-value">{{ stats.zombie_customers.toLocaleString() }}</div>
+        <div class="stat-card-footer">
+          <span class="stat-card-trend up">↑ 3 本月新增</span>
+          <span class="stat-card-sub">13.9% 占比</span>
         </div>
-        <div class="stat-label">僵尸客户</div>
       </div>
     </div>
 
@@ -501,14 +501,19 @@ onUnmounted(() => {
   border: 1px solid #e5e6eb;
 }
 
-.stat-header {
+.stat-card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 16px;
 }
 
-.stat-icon {
+.stat-card-title {
+  font-size: 14px;
+  color: #86909c;
+}
+
+.stat-card-icon {
   width: 44px;
   height: 44px;
   border-radius: 10px;
@@ -518,7 +523,7 @@ onUnmounted(() => {
   font-size: 20px;
 }
 
-.stat-icon.blue {
+.stat-card-icon.blue {
   background: linear-gradient(
     135deg,
     rgba(22, 93, 255, 0.1) 0%,
@@ -527,7 +532,7 @@ onUnmounted(() => {
   color: #165dff;
 }
 
-.stat-icon.green {
+.stat-card-icon.green {
   background: linear-gradient(
     135deg,
     rgba(0, 180, 42, 0.1) 0%,
@@ -536,7 +541,7 @@ onUnmounted(() => {
   color: #00b42a;
 }
 
-.stat-icon.orange {
+.stat-card-icon.orange {
   background: linear-gradient(
     135deg,
     rgba(255, 125, 0, 0.1) 0%,
@@ -545,7 +550,7 @@ onUnmounted(() => {
   color: #ff7d00;
 }
 
-.stat-icon.red {
+.stat-card-icon.red {
   background: linear-gradient(
     135deg,
     rgba(245, 63, 63, 0.1) 0%,
@@ -554,35 +559,40 @@ onUnmounted(() => {
   color: #f53f3f;
 }
 
-.stat-trend {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  font-weight: 500;
-  padding: 2px 8px;
-  border-radius: 4px;
-}
-
-.stat-trend.up {
-  background: rgba(0, 180, 42, 0.1);
-  color: #00b42a;
-}
-
-.stat-trend.down {
-  background: rgba(245, 63, 63, 0.1);
-  color: #f53f3f;
-}
-
-.stat-value {
+.stat-card-value {
   font-size: 32px;
   font-weight: 700;
   color: #1d2129;
   margin-bottom: 8px;
 }
 
-.stat-label {
-  font-size: 14px;
+.stat-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.stat-card-trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.stat-card-trend.up {
+  background: rgba(0, 180, 42, 0.1);
+  color: #00b42a;
+}
+
+.stat-card-trend.down {
+  background: rgba(245, 63, 63, 0.1);
+  color: #f53f3f;
+}
+
+.stat-card-sub {
   color: #86909c;
 }
 
