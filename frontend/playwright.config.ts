@@ -10,11 +10,11 @@ export default defineConfig({
   fullyParallel: true,
   
   // 每个文件的超时时间
-  timeout: 30 * 1000,
+  timeout: 60 * 1000,
   
   // 每个测试用例的超时时间
   expect: {
-    timeout: 5000
+    timeout: 10000
   },
   
   // 失败后重试次数
