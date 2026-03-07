@@ -13,7 +13,7 @@
           <div class="sidebar-logo">
             <icon-user-group />
           </div>
-          <span v-if="!collapsed" class="sidebar-title">客户运营中台</span>
+          <span v-if="!collapsed" class="sidebar-title">客户管理系统</span>
         </div>
 
         <a-menu
@@ -22,185 +22,190 @@
           @menu-item-click="handleMenuSelect"
           class="sidebar-menu"
         >
-          <a-menu-item key="dashboard">
-            <template #icon>
-              <icon-home />
-            </template>
-            工作台
-          </a-menu-item>
+          <a-menu-item-group title="工作台">
+            <a-menu-item key="dashboard">
+              <template #icon>
+                <icon-home />
+              </template>
+              仪表盘
+            </a-menu-item>
+          </a-menu-item-group>
 
-          <a-sub-menu key="customer">
-            <template #icon>
-              <icon-user-group />
-            </template>
-            <template #title>客户管理</template>
-            <a-menu-item key="customer-list"> 客户列表 </a-menu-item>
-            <a-menu-item
-              v-if="hasPermission('customer.import')"
-              key="customer-import"
-            >
-              批量导入
-            </a-menu-item>
-          </a-sub-menu>
+          <a-menu-item-group title="客户管理">
+            <a-sub-menu key="customer">
+              <template #icon>
+                <icon-user-group />
+              </template>
+              <template #title>客户管理</template>
+              <a-menu-item key="customer-list"> 客户列表 </a-menu-item>
+              <a-menu-item
+                v-if="hasPermission('customer.import')"
+                key="customer-import"
+              >
+                批量导入
+              </a-menu-item>
+            </a-sub-menu>
+          </a-menu-item-group>
 
-          <a-sub-menu
-            v-if="
-              hasAnyPermission(['health.view', 'health.risk', 'health.zombie'])
-            "
-            key="health"
-          >
-            <template #icon>
-              <icon-bar-chart />
-            </template>
-            <template #title>健康度监控</template>
-            <a-menu-item
-              v-if="hasPermission('health.view')"
-              key="health-dashboard"
+          <a-menu-item-group title="健康监控">
+            <a-sub-menu
+              v-if="
+                hasAnyPermission([
+                  'health.view',
+                  'health.risk',
+                  'health.zombie',
+                ])
+              "
+              key="health"
             >
-              健康度仪表盘
-            </a-menu-item>
-            <a-menu-item v-if="hasPermission('health.risk')" key="health-risks">
-              风险客户
-            </a-menu-item>
-            <a-menu-item
-              v-if="hasPermission('health.zombie')"
-              key="health-zombies"
-            >
-              僵尸客户
-            </a-menu-item>
-          </a-sub-menu>
+              <template #icon>
+                <icon-bar-chart />
+              </template>
+              <template #title>健康度监控</template>
+              <a-menu-item
+                v-if="hasPermission('health.view')"
+                key="health-dashboard"
+              >
+                健康仪表盘
+              </a-menu-item>
+              <a-menu-item
+                v-if="hasPermission('health.risk')"
+                key="health-risks"
+              >
+                风险客户
+              </a-menu-item>
+              <a-menu-item
+                v-if="hasPermission('health.zombie')"
+                key="health-zombies"
+              >
+                僵尸客户
+              </a-menu-item>
+            </a-sub-menu>
+          </a-menu-item-group>
 
-          <a-sub-menu
-            v-if="hasAnyPermission(['tier.view', 'tier.config'])"
-            key="tier"
-          >
-            <template #icon>
-              <icon-star />
-            </template>
-            <template #title>价值评估</template>
-            <a-menu-item v-if="hasPermission('tier.config')" key="tier-config">
-              等级配置
-            </a-menu-item>
-            <a-menu-item v-if="hasPermission('tier.view')" key="tier-history">
-              定级历史
-            </a-menu-item>
-          </a-sub-menu>
+          <a-menu-item-group title="定价管理">
+            <a-sub-menu
+              v-if="hasAnyPermission(['pricing.view', 'pricing.edit'])"
+              key="pricing"
+            >
+              <template #icon>
+                <icon-coins />
+              </template>
+              <template #title>定价管理</template>
+              <a-menu-item
+                v-if="hasPermission('pricing.view')"
+                key="pricing-configs"
+              >
+                价格配置
+              </a-menu-item>
+              <a-menu-item
+                v-if="hasPermission('pricing.view')"
+                key="pricing-bands"
+              >
+                价格区间
+              </a-menu-item>
+              <a-menu-item
+                v-if="hasPermission('pricing.view')"
+                key="pricing-strategies"
+              >
+                定价策略
+              </a-menu-item>
+            </a-sub-menu>
+          </a-menu-item-group>
 
-          <a-sub-menu
-            v-if="hasAnyPermission(['pricing.view', 'pricing.edit'])"
-            key="pricing"
-          >
-            <template #icon>
-              <icon-file />
-            </template>
-            <template #title>定价管理</template>
-            <a-menu-item
-              v-if="hasPermission('pricing.view')"
-              key="pricing-configs"
+          <a-menu-item-group title="结算管理">
+            <a-sub-menu
+              v-if="
+                hasAnyPermission([
+                  'billing.view',
+                  'billing.create',
+                  'billing.edit',
+                ])
+              "
+              key="billing"
             >
-              价格配置
-            </a-menu-item>
-            <a-menu-item
-              v-if="hasPermission('pricing.view')"
-              key="pricing-bands"
-            >
-              价格区间
-            </a-menu-item>
-            <a-menu-item
-              v-if="hasPermission('pricing.view')"
-              key="pricing-strategies"
-            >
-              定价策略
-            </a-menu-item>
-          </a-sub-menu>
+              <template #icon>
+                <icon-file />
+              </template>
+              <template #title>结算管理</template>
+              <a-menu-item
+                v-if="hasPermission('billing.create')"
+                key="billing-generate"
+              >
+                结算单生成
+              </a-menu-item>
+              <a-menu-item
+                v-if="hasPermission('billing.view')"
+                key="billing-list"
+              >
+                结算单列表
+              </a-menu-item>
+              <a-menu-item
+                v-if="hasPermission('billing.edit')"
+                key="billing-exceptions"
+              >
+                异常处理
+              </a-menu-item>
+            </a-sub-menu>
+          </a-menu-item-group>
 
-          <a-sub-menu
-            v-if="
-              hasAnyPermission([
-                'billing.view',
-                'billing.create',
-                'billing.edit',
-              ])
-            "
-            key="billing"
-          >
-            <template #icon>
-              <icon-file />
-            </template>
-            <template #title>结算管理</template>
-            <a-menu-item
-              v-if="hasPermission('billing.create')"
-              key="billing-generate"
+          <a-menu-item-group title="客户转移">
+            <a-sub-menu
+              v-if="hasAnyPermission(['transfer.view', 'transfer.create'])"
+              key="transfer"
             >
-              结算单生成
-            </a-menu-item>
-            <a-menu-item
-              v-if="hasPermission('billing.view')"
-              key="billing-list"
-            >
-              结算单列表
-            </a-menu-item>
-            <a-menu-item
-              v-if="hasPermission('billing.edit')"
-              key="billing-exceptions"
-            >
-              异常处理
-            </a-menu-item>
-          </a-sub-menu>
+              <template #icon>
+                <icon-swap />
+              </template>
+              <template #title>客户转移</template>
+              <a-menu-item
+                v-if="hasPermission('transfer.create')"
+                key="transfer-create"
+              >
+                新建转移
+              </a-menu-item>
+              <a-menu-item
+                v-if="hasPermission('transfer.view')"
+                key="transfer-history"
+              >
+                转移历史
+              </a-menu-item>
+            </a-sub-menu>
+          </a-menu-item-group>
 
-          <a-sub-menu
-            v-if="hasAnyPermission(['transfer.view', 'transfer.create'])"
-            key="transfer"
-          >
-            <template #icon>
-              <icon-swap />
-            </template>
-            <template #title>客户转移</template>
+          <a-menu-item-group title="系统管理">
             <a-menu-item
-              v-if="hasPermission('transfer.create')"
-              key="transfer-create"
+              v-if="hasPermission('system.log.view')"
+              key="system-logs"
             >
-              客户转移
+              <template #icon>
+                <icon-history />
+              </template>
+              操作日志
             </a-menu-item>
-            <a-menu-item
-              v-if="hasPermission('transfer.view')"
-              key="transfer-history"
-            >
-              转移历史
-            </a-menu-item>
-          </a-sub-menu>
 
-          <a-menu-item
-            v-if="hasPermission('system.log.view')"
-            key="system-logs"
-          >
-            <template #icon>
-              <icon-history />
-            </template>
-            操作日志
-          </a-menu-item>
-
-          <a-sub-menu
-            v-if="hasAnyPermission(['user.view', 'rbac.role'])"
-            key="system"
-          >
-            <template #icon>
-              <icon-settings />
-            </template>
-            <template #title>系统管理</template>
-            <a-menu-item v-if="hasPermission('user.view')" key="system-users">
-              用户管理
-            </a-menu-item>
-            <a-menu-item v-if="hasPermission('rbac.role')" key="system-roles">
-              角色管理
-            </a-menu-item>
-            <a-menu-item
-              v-if="hasPermission('system.permission')"
-              key="system-permissions"
+            <a-sub-menu
+              v-if="hasAnyPermission(['user.view', 'rbac.role'])"
+              key="system"
             >
-              权限配置
-            </a-menu-item>
-          </a-sub-menu>
+              <template #icon>
+                <icon-settings />
+              </template>
+              <template #title>系统管理</template>
+              <a-menu-item v-if="hasPermission('user.view')" key="system-users">
+                用户管理
+              </a-menu-item>
+              <a-menu-item v-if="hasPermission('rbac.role')" key="system-roles">
+                角色管理
+              </a-menu-item>
+              <a-menu-item
+                v-if="hasPermission('system.permission')"
+                key="system-permissions"
+              >
+                权限配置
+              </a-menu-item>
+            </a-sub-menu>
+          </a-menu-item-group>
         </a-menu>
 
         <!-- 侧边栏底部用户信息 -->
