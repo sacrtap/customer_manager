@@ -2,8 +2,6 @@ import axios from 'axios'
 import type { AxiosInstance, AxiosError } from 'axios'
 import { useUserStore } from '@/stores/user'
 
-const userStore = useUserStore()
-
 const apiClient: AxiosInstance = axios.create({
   baseURL: '/api/v1',
   timeout: 30000,
@@ -12,9 +10,18 @@ const apiClient: AxiosInstance = axios.create({
   }
 })
 
+const getUserStore = () => {
+  try {
+    return useUserStore()
+  } catch {
+    return null
+  }
+}
+
 apiClient.interceptors.request.use(
   (config) => {
-    const token = userStore.token
+    const store = getUserStore()
+    const token = store?.token
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
