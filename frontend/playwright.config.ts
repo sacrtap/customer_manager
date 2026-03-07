@@ -62,9 +62,9 @@ export default defineConfig({
   ],
   
   // 运行开发服务器
-  // webServer: {
-  //   command: 'npm run dev',
-  //   port: 5174,
-  //   reuseExistingServer: true,
-  // },
+  webServer: {
+    command: 'npm run dev',
+    port: 5174,
+    reuseExistingServer: true,
+  },
 });

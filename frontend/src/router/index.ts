@@ -5,7 +5,7 @@ const routes: AppRouteRecordRaw[] = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import('@/views/Login.vue'),
+    component: () => import('@/views/LoginView.vue'),
     meta: {
       title: '登录',
       requiresAuth: false
