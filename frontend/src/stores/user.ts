@@ -31,13 +31,13 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  const login = async (username: string, password: string) => {
+  const login = async (credentials: { username: string; password: string }) => {
     const response = await fetch('/api/v1/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify(credentials)
     })
 
     if (!response.ok) {
