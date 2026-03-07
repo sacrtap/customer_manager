@@ -218,8 +218,6 @@ const handleLogin = async () => {
 </script>
 
 <style scoped lang="scss">
-@import "@/styles/variables.scss";
-
 * {
   margin: 0;
   padding: 0;
@@ -231,8 +229,8 @@ const handleLogin = async () => {
   min-height: 100vh;
   align-items: center;
   justify-content: center;
-  padding: $spacing-sm;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+  padding: 16px;
+  background: var(--color-fill-2);
 }
 
 .login-wrapper {
@@ -240,50 +238,23 @@ const handleLogin = async () => {
   width: 100%;
   max-width: 1200px;
   min-height: 640px;
-  background: #ffffff;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-lg;
+  background: var(--color-bg-1);
+  border-radius: var(--border-radius-large);
+  border: 1px solid var(--color-border);
   overflow: hidden;
 }
 
 /* 左侧品牌区域 */
 .brand-section {
   flex: 1;
-  background: $primary-gradient;
+  background: var(--color-primary-light-1);
   padding: 60px 50px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  color: #ffffff;
+  color: var(--color-primary);
   position: relative;
   overflow: hidden;
-}
-
-.brand-section::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.1) 0%,
-    transparent 70%
-  );
-  animation: pulse 4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.5;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.8;
-  }
 }
 
 .brand-header {
@@ -301,11 +272,12 @@ const handleLogin = async () => {
 .logo-icon {
   width: 48px;
   height: 48px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
+  background: var(--color-primary);
+  border-radius: var(--border-radius-medium);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
   font-size: 24px;
 }
 
@@ -324,7 +296,7 @@ const handleLogin = async () => {
 
 .brand-subtitle {
   font-size: 16px;
-  opacity: 0.9;
+  opacity: 0.8;
   line-height: 1.6;
 }
 
@@ -338,17 +310,17 @@ const handleLogin = async () => {
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
+  background: rgba(22, 93, 255, 0.1);
   padding: 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-medium);
+  border: 1px solid var(--color-border);
 }
 
 .stat-number {
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 4px;
+  color: var(--color-primary);
 }
 
 .stat-label {
@@ -380,13 +352,13 @@ const handleLogin = async () => {
 .login-title {
   font-size: 28px;
   font-weight: 600;
-  color: #1d2129;
+  color: var(--color-text-1);
   margin-bottom: 8px;
 }
 
 .login-subtitle {
   font-size: 14px;
-  color: #86909c;
+  color: var(--color-text-3);
 }
 
 .login-form {
@@ -397,7 +369,7 @@ const handleLogin = async () => {
   display: block;
   font-size: 14px;
   font-weight: 500;
-  color: #1d2129;
+  color: var(--color-text-1);
   margin-bottom: 8px;
 }
 
@@ -406,7 +378,7 @@ const handleLogin = async () => {
 
   :deep(.arco-input-wrapper) {
     height: 44px;
-    border-radius: 8px;
+    border-radius: var(--border-radius-medium);
   }
 }
 
@@ -419,25 +391,23 @@ const handleLogin = async () => {
 
 .forgot-link {
   font-size: 14px;
-  color: #165dff;
+  color: var(--color-primary);
   cursor: pointer;
 
   &:hover {
-    color: #4080ff;
+    color: var(--color-primary-light-1);
   }
 }
 
 .login-btn {
   width: 100%;
   height: 44px;
-  border-radius: 8px;
+  border-radius: var(--border-radius-medium);
   font-size: 16px;
   font-weight: 500;
-  background: #165dff;
-  border: none;
 
   &:hover {
-    background: #0e42d2;
+    background: var(--color-primary-light-1);
   }
 }
 
@@ -445,7 +415,7 @@ const handleLogin = async () => {
   display: flex;
   align-items: center;
   margin: 32px 0;
-  color: #86909c;
+  color: var(--color-text-3);
   font-size: 14px;
 
   &::before,
@@ -453,7 +423,7 @@ const handleLogin = async () => {
     content: "";
     flex: 1;
     height: 1px;
-    background: #e5e6eb;
+    background: var(--color-border);
   }
 
   span {
@@ -467,7 +437,7 @@ const handleLogin = async () => {
 
   p {
     font-size: 13px;
-    color: #86909c;
+    color: var(--color-text-3);
     margin-bottom: 8px;
   }
 }
