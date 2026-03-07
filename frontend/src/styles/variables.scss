@@ -9,8 +9,23 @@
 // - var(--border-radius-medium)
 // - 等更多变量参考：https://arco.design/vue/docs/token
 
+// 主色 - Arco Blue 极致蓝
 $primary-color: #165DFF;
 $primary-dark: #0E42D2;
+$primary-hover: #4080FF;
+$primary-light: #E8F3FF;
+
+// 功能色
 $success-color: #00B42A;
 $warning-color: #FF7D00;
 $danger-color: #F53F3F;
+
+// Arco Design 完整色阶（LESS 变量，供 vite.config.ts 使用）
+// 蓝色系 - 极致蓝
+// - arcoblue-1: #E8F3FF (背景)
+// - arcoblue-2: #BFD8FF (悬停背景)
+// - arcoblue-3: #8FBFFF
+// - arcoblue-4: #64A3FF
+// - arcoblue-5: #4080FF (Hover)
+// - arcoblue-6: #165DFF (主色)
+// - arcoblue-7: #0E42D2 (Active)
