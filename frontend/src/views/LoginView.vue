@@ -111,32 +111,45 @@
             <span>快捷入口</span>
           </div>
 
+          <a-alert
+            type="info"
+            title="默认测试账号"
+            style="margin-bottom: 16px"
+          >
+            <template #content>
+              <div style="margin-top: 8px; font-size: 13px">
+                <div>用户名：<strong>admin</strong> / 密码：<strong>Admin@123</strong></div>
+                <div style="margin-top: 4px; opacity: 0.8">点击下方标签可快速填充账号</div>
+              </div>
+            </template>
+          </a-alert>
+
           <div class="login-tips">
-            <p>测试账号</p>
+            <p>快捷填充</p>
             <div class="role-tags">
               <a-tag
                 color="arcoblue"
-                @click="fillTestAccount('admin', 'admin123')"
+                @click="fillTestAccount('admin', 'Admin@123')"
               >
-                admin / admin123
+                admin
               </a-tag>
               <a-tag
                 color="green"
-                @click="fillTestAccount('manager', 'manager123')"
+                @click="fillTestAccount('manager', 'Manager@123')"
               >
-                manager / manager123
+                manager
               </a-tag>
               <a-tag
                 color="orange"
-                @click="fillTestAccount('specialist', 'specialist123')"
+                @click="fillTestAccount('specialist', 'Specialist@123')"
               >
-                specialist / specialist123
+                specialist
               </a-tag>
               <a-tag
                 color="purple"
-                @click="fillTestAccount('sales', 'sales123')"
+                @click="fillTestAccount('sales', 'Sales@123')"
               >
-                sales / sales123
+                sales
               </a-tag>
             </div>
           </div>
