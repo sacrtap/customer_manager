@@ -4,7 +4,7 @@ import { createRouter, createMemoryHistory } from 'vue-router'
 import { createPinia, setActivePinia } from 'pinia'
 import { mount } from '@vue/test-utils'
 import { useUserStore } from '@/stores/user'
-import Login from '@/views/Login.vue'
+import Login from '@/views/LoginView.vue'
 import Dashboard from '@/views/Dashboard.vue'
 
 describe('Authentication Integration', () => {
