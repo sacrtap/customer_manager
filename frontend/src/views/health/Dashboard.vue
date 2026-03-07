@@ -253,33 +253,20 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
-@import "@/styles/variables.scss";
-
 .health-dashboard {
-  padding: $spacing-md;
+  padding: 24px;
 }
 
 /* 欢迎横幅 */
 .welcome-banner {
-  @include chart-card;
-  background: $primary-gradient;
-  border-radius: $border-radius-md;
-  padding: $spacing-lg;
-  color: white;
-  margin-bottom: $spacing-md;
-  position: relative;
-  overflow: hidden;
+  background: var(--color-primary-light-1);
+  border-radius: var(--border-radius-medium);
+  padding: 32px;
+  color: var(--color-primary);
+  margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.welcome-banner {
-  background: linear-gradient(135deg, #165dff 0%, #0e42d2 100%);
-  border-radius: 12px;
-  padding: 32px;
-  color: white;
-  margin-bottom: 24px;
 }
 
 .welcome-title {
@@ -290,25 +277,28 @@ onUnmounted(() => {
 
 .welcome-subtitle {
   font-size: 14px;
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-  margin-bottom: $spacing-md;
+  margin-bottom: 24px;
 }
 
 .charts-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 20px;
-  margin-bottom: $spacing-md;
+  margin-bottom: 24px;
 }
 
 .chart-card {
-  @include chart-card;
+  background: var(--color-bg-1);
+  border-radius: var(--border-radius-medium);
+  padding: 24px;
+  border: 1px solid var(--color-border);
 }
 
 .chart-header {
@@ -321,7 +311,7 @@ onUnmounted(() => {
 .chart-title {
   font-size: 16px;
   font-weight: 600;
-  color: #1d2129;
+  color: var(--color-text-1);
 }
 
 .chart-container {
@@ -333,7 +323,10 @@ onUnmounted(() => {
 }
 
 .alert-list-card {
-  @include chart-card;
+  background: var(--color-bg-1);
+  border-radius: var(--border-radius-medium);
+  padding: 24px;
+  border: 1px solid var(--color-border);
 }
 
 .card-header {
@@ -346,7 +339,7 @@ onUnmounted(() => {
 .card-title {
   font-size: 16px;
   font-weight: 600;
-  color: #1d2129;
+  color: var(--color-text-1);
 }
 
 @media (max-width: 1200px) {
