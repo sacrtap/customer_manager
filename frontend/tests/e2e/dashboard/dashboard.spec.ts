@@ -35,16 +35,33 @@ test.describe('Dashboard 页面 E2E 测试', () => {
     test('TC-DASH-002: 欢迎横幅显示正确用户信息', async ({ page }) => {
       const welcomeBanner = page.locator('.welcome-banner');
       await expect(welcomeBanner).toBeVisible();
-      await expect(welcomeBanner.locator('.welcome-title')).toContainText('系统管理员');
+      await expect(welcomeBanner.locator('h2')).toContainText('系统管理员');
     });
 
-    // TC-DASH-003: 统计卡片显示正确
-    test('TC-DASH-003: 统计卡片显示正确', async ({ page }) => {
+    // TC-DASH-003: 欢迎横幅统计显示正确
+    test('TC-DASH-003: 欢迎横幅统计显示正确', async ({ page }) => {
+      const welcomeBanner = page.locator('.welcome-banner');
+      await expect(welcomeBanner).toBeVisible();
+      await expect(welcomeBanner).toContainText('客户总数');
+      await expect(welcomeBanner).toContainText('活跃率');
+    });
+
+    // TC-DASH-004: 统计卡片显示正确
+    test('TC-DASH-004: 统计卡片显示正确', async ({ page }) => {
       await expect(page.locator('.stat-card').nth(0)).toBeVisible();
-      await expect(page.locator('.stat-card').nth(0)).toContainText('客户总数');
+      await expect(page.locator('.stat-card').nth(0)).toContainText('总客户数');
       await expect(page.locator('.stat-card').nth(1)).toContainText('活跃客户');
       await expect(page.locator('.stat-card').nth(2)).toContainText('风险客户');
       await expect(page.locator('.stat-card').nth(3)).toContainText('僵尸客户');
+    });
+
+    // TC-DASH-005: 图表时间按钮文案正确
+    test('TC-DASH-005: 图表时间按钮文案正确', async ({ page }) => {
+      const chartCard = page.locator('.chart-card').nth(0);
+      await expect(chartCard).toBeVisible();
+      await expect(chartCard).toContainText('7天');
+      await expect(chartCard).toContainText('30天');
+      await expect(chartCard).toContainText('90天');
     });
   });
 
@@ -75,7 +92,7 @@ test.describe('Dashboard 页面 E2E 测试', () => {
     test('TC-DASH-201: 风险客户表格显示', async ({ page }) => {
       const tableCard = page.locator('.table-card').nth(0);
       await expect(tableCard).toBeVisible({ timeout: 5000 });
-      await expect(tableCard).toContainText('风险客户预警');
+      await expect(tableCard).toContainText('⚠️ 风险客户预警');
     });
 
     // TC-DASH-202: 风险客户表格列显示

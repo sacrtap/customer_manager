@@ -12,7 +12,7 @@ test.describe('简单登录测试', () => {
     await page.screenshot({ path: 'test-screenshot-1.png' });
     
     // 检查页面标题
-    await expect(page).toHaveTitle(/客户运营中台/);
+    await expect(page).toHaveTitle(/客户管理系统/);
     
     // 检查登录框存在
     const loginBox = page.locator('.login-container').first();

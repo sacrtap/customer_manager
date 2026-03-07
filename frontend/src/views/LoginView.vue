@@ -9,7 +9,7 @@
               <div class="logo-icon">
                 <icon-user-group />
               </div>
-              <span class="brand-name">客户运营中台</span>
+              <span class="brand-name">客户管理系统</span>
             </div>
             <h1 class="brand-title">数据驱动的<br />客户运营管理</h1>
             <p class="brand-subtitle">
@@ -39,7 +39,7 @@
         </div>
 
         <div class="brand-footer">
-          © 2026 客户运营中台系统 v1.0 | 企业内部管理系统
+          © 2026 客户管理系统 v1.0 | 企业内部管理系统
         </div>
       </div>
 
