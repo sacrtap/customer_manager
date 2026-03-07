@@ -3,7 +3,7 @@
     <!-- 欢迎横幅 -->
       <div class="welcome-banner">
         <div class="welcome-text">
-          <h2>早上好，{{ userInfo.real_name }} 👋</h2>
+          <h2><icon-morning/> 早上好，{{ userInfo.real_name }}</h2>
           <p>今天是 {{ currentDate }}，祝您工作愉快！</p>
         </div>
         <div class="welcome-stats">
@@ -30,12 +30,12 @@
             <div class="stat-card-title">总客户数</div>
           </div>
           <div class="stat-card-icon blue">
-            👥
+            <icon-user-group />
           </div>
         </div>
         <div class="stat-card-value">{{ stats.total_customers.toLocaleString() }}</div>
         <div class="stat-card-footer">
-          <span class="stat-card-trend up">↑ 12 本月新增</span>
+          <span class="stat-card-trend up"><icon-arrow-rise/> 12 本月新增</span>
           <span class="stat-card-sub">较上月 +0.9%</span>
         </div>
       </div>
@@ -46,12 +46,12 @@
             <div class="stat-card-title">活跃客户</div>
           </div>
           <div class="stat-card-icon green">
-            ✅
+            <icon-check-circle />
           </div>
         </div>
         <div class="stat-card-value">{{ stats.healthy_customers.toLocaleString() }}</div>
         <div class="stat-card-footer">
-          <span class="stat-card-trend up">↑ 82.5%</span>
+          <span class="stat-card-trend up"><icon-arrow-rise/> 82.5%</span>
           <span class="stat-card-sub">活跃率</span>
         </div>
       </div>
@@ -62,12 +62,12 @@
             <div class="stat-card-title">风险客户</div>
           </div>
           <div class="stat-card-icon orange">
-            ⚠️
+            <icon-exclamation-circle />
           </div>
         </div>
         <div class="stat-card-value">{{ stats.at_risk_customers.toLocaleString() }}</div>
         <div class="stat-card-footer">
-          <span class="stat-card-trend down">↓ 5 较上周</span>
+          <span class="stat-card-trend down"><icon-arrow-fall/> 5 较上周</span>
           <span class="stat-card-sub">3.6% 占比</span>
         </div>
       </div>
@@ -78,12 +78,12 @@
             <div class="stat-card-title">僵尸客户</div>
           </div>
           <div class="stat-card-icon red">
-            💀
+            <icon-user-delete />
           </div>
         </div>
         <div class="stat-card-value">{{ stats.zombie_customers.toLocaleString() }}</div>
         <div class="stat-card-footer">
-          <span class="stat-card-trend up">↑ 3 本月新增</span>
+          <span class="stat-card-trend up"><icon-arrow-rise/> 3 本月新增</span>
           <span class="stat-card-sub">13.9% 占比</span>
         </div>
       </div>
@@ -117,14 +117,15 @@
     <div class="bottom-grid">
       <div class="table-card">
         <div class="table-header">
-          <span class="table-title">⚠️ 风险客户预警</span>
-          <span class="view-all" @click="goToRiskList">查看全部</span>
+          <span class="table-title"><icon-exclamation-circle style="margin-right: 6px; vertical-align: middle;"/>风险客户预警</span>
+          <span class="view-all" @click="goToRiskList">查看全部<icon-right style="margin-left: 4px;"/></span>
         </div>
         <a-table
           :columns="riskColumns"
           :data="riskData"
           :pagination="false"
           size="small"
+          :loading="loading"
         >
           <template #tier="{ record }">
             <span :class="['tier-badge', record.tier]">{{ record.tier }}</span>
@@ -143,16 +144,19 @@
               }}
             </span>
           </template>
-          <template #action>
-            <a-button type="text" size="mini">查看</a-button>
+          <template #action="{ record }">
+            <a-button type="primary" size="mini">
+              <template #icon><icon-eye /></template>
+              查看
+            </a-button>
           </template>
         </a-table>
       </div>
 
       <div class="table-card">
         <div class="table-header">
-          <span class="table-title">📋 最近结算记录</span>
-          <span class="view-all" @click="goToBillingList">查看全部</span>
+          <span class="table-title"><icon-file-text style="margin-right: 6px; vertical-align: middle;"/>最近结算记录</span>
+          <span class="view-all" @click="goToBillingList">查看全部<icon-right style="margin-left: 4px;"/></span>
         </div>
         <a-table
           :columns="billingColumns"
@@ -174,7 +178,10 @@
             </a-tag>
           </template>
           <template #action>
-            <a-button type="text" size="mini">详情</a-button>
+            <a-button type="primary" size="mini">
+              <template #icon><icon-file /></template>
+              详情
+            </a-button>
           </template>
         </a-table>
       </div>
@@ -323,17 +330,39 @@ const initTrendChart = () => {
       type: "value",
       min: 0,
       max: 100,
+      splitLine: {
+        lineStyle: {
+          color: 'rgba(0, 0, 0, 0.06)',
+          type: 'dashed'
+        }
+      }
     },
     series: [
       {
         name: "健康度评分",
         type: "line",
         smooth: true,
+        symbol: 'circle',
+        symbolSize: 8,
         data: dashboardData.value.health_trend.map(
           (item: { date: string; score: number }) => item.score,
         ),
-        areaStyle: { opacity: 0.1 },
-        itemStyle: { color: "#00b42a" },
+        itemStyle: {
+          color: '#165DFF'
+        },
+        lineStyle: {
+          width: 3,
+          color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+            { offset: 0, color: '#165DFF' },
+            { offset: 1, color: '#4080FF' }
+          ])
+        },
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(22, 93, 255, 0.2)' },
+            { offset: 1, color: 'rgba(22, 93, 255, 0.02)' }
+          ])
+        }
       },
     ],
   };
@@ -364,9 +393,11 @@ const initTierChart = () => {
         center: ["35%", "50%"],
         avoidLabelOverlap: false,
         itemStyle: {
-          borderRadius: 8,
+          borderRadius: 10,
           borderColor: "#fff",
-          borderWidth: 2,
+          borderWidth: 3,
+          shadowBlur: 10,
+          shadowColor: 'rgba(0, 0, 0, 0.1)'
         },
         label: {
           show: false,
@@ -377,6 +408,11 @@ const initTierChart = () => {
             fontSize: 16,
             fontWeight: "bold",
           },
+          itemStyle: {
+            shadowBlur: 20,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.2)'
+          }
         },
         data: dashboardData.value.value_distribution.map((item: any) => ({
           value: item.count,
@@ -384,12 +420,12 @@ const initTierChart = () => {
           itemStyle: {
             color:
               item.tier === "A"
-                ? "#165dff"
+                ? "#165DFF"  // 极致蓝
                 : item.tier === "B"
-                  ? "#00b42a"
+                  ? "#00B42A"  // 成功绿
                   : item.tier === "C"
-                    ? "#86909c"
-                    : "#c9cdd4",
+                    ? "#86909C"  // 中性灰
+                    : "#C9CDD4", // 浅灰
           },
         })),
       },
@@ -480,6 +516,18 @@ onUnmounted(() => {
   border-radius: var(--border-radius-medium);
   padding: 24px;
   border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(22, 93, 255, 0.12);
+    border-color: var(--color-primary-light-2);
+
+    .stat-card-icon {
+      transform: scale(1.1);
+    }
+  }
 }
 
 .stat-card-header {
@@ -502,6 +550,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   font-size: 20px;
+  transition: transform 0.2s ease;
 }
 
 .stat-card-icon.blue {
@@ -574,6 +623,12 @@ onUnmounted(() => {
   border-radius: var(--border-radius-medium);
   padding: 24px;
   border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border-color: var(--color-primary-light-2);
+  }
 }
 
 .chart-header {
@@ -614,6 +669,12 @@ onUnmounted(() => {
   border-radius: var(--border-radius-medium);
   padding: 24px;
   border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border-color: var(--color-primary-light-2);
+  }
 }
 
 .table-header {
@@ -633,9 +694,14 @@ onUnmounted(() => {
   font-size: 14px;
   color: var(--color-primary);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
 
   &:hover {
-    color: var(--color-primary-light-1);
+    color: var(--color-primary-hover);
+    transform: translateX(4px);
   }
 }
 
